@@ -1,7 +1,7 @@
 package com.vention.stockmarket.service.impl;
 
 import com.vention.stockmarket.dto.ResponseDTO;
-import com.vention.stockmarket.model.UserModel;
+import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.repository.UserRepository;
 import com.vention.stockmarket.service.UserService;
 import lombok.RequiredArgsConstructor;

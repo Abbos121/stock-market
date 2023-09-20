@@ -1,4 +1,4 @@
-package com.vention.stockmarket.model;
+package com.vention.stockmarket.domain;
 
 import lombok.Data;
 
@@ -11,7 +11,6 @@ public class UserModel {
     private String firstName;
     private String secondName;
     private Date dateOfBirth;
-//    private Set<Role> roles;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
