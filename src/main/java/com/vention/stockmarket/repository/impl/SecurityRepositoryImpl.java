@@ -1,6 +1,7 @@
 package com.vention.stockmarket.repository.impl;
 
 import com.vention.stockmarket.domain.SecurityModel;
+import com.vention.stockmarket.enumuration.Role;
 import com.vention.stockmarket.repository.BaseRepository;
 import com.vention.stockmarket.repository.SecurityRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +20,16 @@ public class SecurityRepositoryImpl implements SecurityRepository {
 
     @Override
     public Long create(SecurityModel security) {
-        String sql = "INSERT INTO security (user_id, email, password) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO security (user_id, email, password, roles) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = BaseRepository.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, security.getUserId());
             preparedStatement.setString(2, security.getEmail());
             preparedStatement.setString(3, security.getPassword());
+            preparedStatement.setString(4, security.getRoles().toString());
 
             int affectedRows = preparedStatement.executeUpdate();
-
             if (affectedRows == 0)
                 throw new SQLException("Creating security failed, no rows affected.");
 
@@ -60,6 +61,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                     security.setUserId(resultSet.getLong("user_id"));
                     security.setEmail(resultSet.getString("email"));
                     security.setPassword(resultSet.getString("password"));
+                    var roles = Role.convertFromStringToSet(resultSet.getString("roles"));
+                    security.setRoles(roles);
                     return security;
                 } else {
                     return null;
@@ -73,17 +76,17 @@ public class SecurityRepositoryImpl implements SecurityRepository {
 
     @Override
     public void update(SecurityModel security) {
-        String sql = "UPDATE security SET user_id = ?, email = ?, password = ? WHERE id = ?";
+        String sql = "UPDATE security SET user_id = ?, email = ?, password = ?, roles = ? WHERE id = ?";
 
         try (Connection connection = BaseRepository.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, security.getUserId());
             preparedStatement.setString(2, security.getEmail());
             preparedStatement.setString(3, security.getPassword());
-            preparedStatement.setLong(4, security.getId());
+            preparedStatement.setString(4, security.getRoles().toString());
+            preparedStatement.setLong(5, security.getId());
 
             int affectedRows = preparedStatement.executeUpdate();
-
             if (affectedRows == 0)
                 throw new SQLException("Updating security failed, no rows affected.");
 
@@ -125,6 +128,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 security.setUserId(resultSet.getLong("user_id"));
                 security.setEmail(resultSet.getString("email"));
                 security.setPassword(resultSet.getString("password"));
+                var roles = Role.convertFromStringToSet(resultSet.getString("roles"));
+                security.setRoles(roles);
                 securities.add(security);
             }
         } catch (SQLException e) {
@@ -134,4 +139,6 @@ public class SecurityRepositoryImpl implements SecurityRepository {
 
         return securities;
     }
+
+
 }
