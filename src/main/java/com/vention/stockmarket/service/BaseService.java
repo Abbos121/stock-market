@@ -1,6 +1,6 @@
 package com.vention.stockmarket.service;
 
-import com.vention.stockmarket.dto.ResponseDTO;
+import com.vention.stockmarket.dto.response.ResponseDTO;
 
 import java.util.List;
 

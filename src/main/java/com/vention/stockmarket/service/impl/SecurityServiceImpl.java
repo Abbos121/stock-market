@@ -1,6 +1,6 @@
 package com.vention.stockmarket.service.impl;
 
-import com.vention.stockmarket.dto.ResponseDTO;
+import com.vention.stockmarket.dto.response.ResponseDTO;
 import com.vention.stockmarket.domain.SecurityModel;
 import com.vention.stockmarket.repository.SecurityRepository;
 import com.vention.stockmarket.service.SecurityService;
