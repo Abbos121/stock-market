@@ -1,6 +1,6 @@
 package com.vention.stockmarket.controller;
 
-import com.vention.stockmarket.model.UserModel;
+import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

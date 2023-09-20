@@ -1,4 +1,4 @@
-package com.vention.stockmarket.dto;
+package com.vention.stockmarket.dto.response;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

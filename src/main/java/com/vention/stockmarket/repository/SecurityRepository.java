@@ -1,14 +1,9 @@
 package com.vention.stockmarket.repository;
 
-import com.vention.stockmarket.model.SecurityModel;
-import com.vention.stockmarket.model.UserModel;
+import com.vention.stockmarket.domain.SecurityModel;
 
 import java.util.List;
 
-public interface SecurityRepository {
-    Long create(SecurityModel security);
-    SecurityModel getById(Long id);
-    void update(SecurityModel security);
-    void delete(Long id);
+public interface SecurityRepository extends BaseRepository<SecurityModel> {
     List<SecurityModel> getAll();
 }

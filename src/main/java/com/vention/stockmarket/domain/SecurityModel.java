@@ -1,6 +1,9 @@
-package com.vention.stockmarket.model;
+package com.vention.stockmarket.domain;
 
+import com.vention.stockmarket.enumuration.Role;
 import lombok.Data;
+
+import java.util.Set;
 
 @Data
 public class SecurityModel {
@@ -8,4 +11,5 @@ public class SecurityModel {
     private Long userId;
     private String email;
     private String password;
+    private Set<Role> roles;
 }

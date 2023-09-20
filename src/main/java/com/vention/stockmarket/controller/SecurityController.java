@@ -1,13 +1,13 @@
 package com.vention.stockmarket.controller;
 
-import com.vention.stockmarket.model.SecurityModel;
+import com.vention.stockmarket.domain.SecurityModel;
 import com.vention.stockmarket.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/security")
 @RequiredArgsConstructor
 public class SecurityController {
 
