@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/stock-market
+    username: postgres
+    password: 6040
+    driver-class-name: org.postgresql.Driver
+
+#springdoc:
+#  swagger-ui:
+#    tags-sorter: alpha
+
+
