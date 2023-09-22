@@ -1,6 +1,8 @@
 package com.vention.stockmarket.controller;
 
 import com.vention.stockmarket.domain.UserModel;
+import com.vention.stockmarket.dto.request.UserRegisterDTO;
+import com.vention.stockmarket.dto.response.ResponseDTO;
 import com.vention.stockmarket.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,11 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> create(UserModel userModel) {
         return ResponseEntity.ok(service.create(userModel));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<ResponseDTO<Long>> registerUser(UserRegisterDTO registerDTO) {
+        return ResponseEntity.ok(service.register(registerDTO));
     }
 
     @GetMapping("/{id}")
