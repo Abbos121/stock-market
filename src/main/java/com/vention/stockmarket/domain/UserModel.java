@@ -22,4 +22,19 @@ public class UserModel {
         this.dateOfBirth = dateOfBirth;
         this.createdAt = createdAt;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserModel userModel = (UserModel) o;
+
+        return id != null ? id.equals(userModel.id) : userModel.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }
