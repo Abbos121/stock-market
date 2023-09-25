@@ -6,10 +6,13 @@ import com.vention.stockmarket.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
