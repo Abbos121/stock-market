@@ -3,6 +3,7 @@ package com.vention.stockmarket.service.impl;
 import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.dto.response.ResponseDTO;
+import com.vention.stockmarket.exceptions.ResourceNotFoundException;
 import com.vention.stockmarket.repository.SecurityRepository;
 import com.vention.stockmarket.repository.UserRepository;
 import com.vention.stockmarket.service.UserService;
@@ -41,11 +42,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseDTO<UserModel> getById(Long id) {
         UserModel user = repository.getById(id);
-        if (user != null) {
-            return new ResponseDTO<>(true, user);
-        } else {
-            return new ResponseDTO<>(false, 404, "User not found", null);
-        }
+        if (user == null)
+            throw new ResourceNotFoundException("User not found with id : " + id);
+        return new ResponseDTO<>(true, user);
     }
 
     @Override

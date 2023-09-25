@@ -30,10 +30,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             preparedStatement.setString(2, security.getEmail());
             preparedStatement.setString(3, security.getPassword());
             preparedStatement.setString(4, security.getRoles().toString());
-
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == 0)
-                throw new SQLException("Creating security failed, no rows affected.");
+            preparedStatement.executeUpdate();
 
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -139,7 +136,6 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-
         return securities;
     }
 

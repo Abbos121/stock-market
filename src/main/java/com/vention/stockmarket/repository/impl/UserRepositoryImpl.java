@@ -34,11 +34,7 @@ public class UserRepositoryImpl implements UserRepository {
             preparedStatement.setDate(3, DateUtils.convertUtilDateToSqlDate(user.getDateOfBirth()));
             preparedStatement.setTimestamp(4, Timestamp.valueOf(user.getCreatedAt()));
 
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("Creating user failed, no rows affected.");
-            }
+            preparedStatement.executeUpdate();
 
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
