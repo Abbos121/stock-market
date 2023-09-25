@@ -23,4 +23,9 @@ public class DateUtils {
     public static String convertDateToString(Date date) {
         return DATE_FORMATTER.format(date);
     }
+
+
+    public static java.sql.Date convertUtilDateToSqlDate(Date date) {
+        return new java.sql.Date(date.getTime());
+    }
 }

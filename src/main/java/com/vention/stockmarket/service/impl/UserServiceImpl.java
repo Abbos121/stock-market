@@ -1,18 +1,14 @@
 package com.vention.stockmarket.service.impl;
 
-import com.vention.stockmarket.domain.SecurityModel;
+import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.dto.response.ResponseDTO;
-import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.repository.SecurityRepository;
 import com.vention.stockmarket.repository.UserRepository;
 import com.vention.stockmarket.service.UserService;
-import com.vention.stockmarket.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -31,11 +27,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseDTO<Long> register(UserRegisterDTO registerDTO) {
+        /*
         UserModel user = new UserModel(registerDTO.getFirstName(), registerDTO.getSecondName(),
-                (Date) DateUtils.convertStringToDate(registerDTO.getDateOfBirth()), LocalDateTime.now());
+                DateUtils.convertStringToDate(registerDTO.getDateOfBirth()), LocalDateTime.now());
         Long userId = repository.create(user);
         SecurityModel security = new SecurityModel(userId, registerDTO.getEmail(), registerDTO.getPassword());
         securityRepository.create(security);
+        */
+        var userId = repository.registerUser(registerDTO);
         return new ResponseDTO<>(true, 200, "registered successfully", userId);
     }
 

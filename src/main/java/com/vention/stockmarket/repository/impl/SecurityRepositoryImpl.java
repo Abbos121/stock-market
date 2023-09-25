@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +78,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
 
     @Override
     public void update(SecurityModel security) {
-        String sql = "UPDATE security SET user_id = ?, email = ?, password = ?, roles = ? WHERE id = ?";
+        String sql = "UPDATE security SET user_id = ?, email = ?, password = ?, roles = ?, updated_at = ? WHERE id = ?";
 
         try (Connection connection = BaseRepository.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -84,7 +86,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             preparedStatement.setString(2, security.getEmail());
             preparedStatement.setString(3, security.getPassword());
             preparedStatement.setString(4, security.getRoles().toString());
-            preparedStatement.setLong(5, security.getId());
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setLong(6, security.getId());
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 0)
