@@ -23,6 +23,6 @@ public class UserRegisterDTO {
     private String secondName;
 
     @NotNull
-    @Pattern(regexp = "dd.MM.yyyy", message = "date format must be like dd.MM.yyyy")
+    @Pattern(regexp = "\\d{2}\\.\\d{2}\\.\\d{4}", message = "date format must be like dd.MM.yyyy")
     private String dateOfBirth;
 }

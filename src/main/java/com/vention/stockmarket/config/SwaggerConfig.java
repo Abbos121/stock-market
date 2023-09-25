@@ -21,7 +21,6 @@ public class SwaggerConfig {
             @Value("${openapi.version}") final String version,
             @Value("${openapi.description}") final String description
     ) {
-        System.out.println("Working inside swagger");
         return new OpenAPI()
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
                 .components(
