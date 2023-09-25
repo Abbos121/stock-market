@@ -1,14 +1,23 @@
 package com.vention.stockmarket.repository.impl;
 
 import com.vention.stockmarket.domain.UserModel;
+import com.vention.stockmarket.dto.request.UserRegisterDTO;
+import com.vention.stockmarket.enumuration.Role;
 import com.vention.stockmarket.repository.BaseRepository;
 import com.vention.stockmarket.repository.UserRepository;
+import com.vention.stockmarket.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,14 +31,10 @@ public class UserRepositoryImpl implements UserRepository {
              PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getSecondName());
-            preparedStatement.setDate(3, user.getDateOfBirth());
+            preparedStatement.setDate(3, DateUtils.convertUtilDateToSqlDate(user.getDateOfBirth()));
             preparedStatement.setTimestamp(4, Timestamp.valueOf(user.getCreatedAt()));
 
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("Creating user failed, no rows affected.");
-            }
+            preparedStatement.executeUpdate();
 
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -61,7 +66,9 @@ public class UserRepositoryImpl implements UserRepository {
                     user.setSecondName(resultSet.getString("second_name"));
                     user.setDateOfBirth(resultSet.getDate("date_of_birth"));
                     user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-                    user.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+                    var updatedAt = resultSet.getTimestamp("updated_at");
+                    if (updatedAt != null)
+                        user.setUpdatedAt(updatedAt.toLocalDateTime());
                     return user;
                 } else {
                     return null;
@@ -81,7 +88,7 @@ public class UserRepositoryImpl implements UserRepository {
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getSecondName());
-            preparedStatement.setDate(3, user.getDateOfBirth());
+            preparedStatement.setDate(3, DateUtils.convertUtilDateToSqlDate(user.getDateOfBirth()));
             preparedStatement.setTimestamp(4, Timestamp.valueOf(user.getUpdatedAt()));
             preparedStatement.setLong(5, user.getId());
 
@@ -107,6 +114,43 @@ public class UserRepositoryImpl implements UserRepository {
             if (affectedRows == 0)
                 throw new SQLException("Deleting user failed, no rows affected.");
         } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Long registerUser(UserRegisterDTO registerDTO) {
+        String userTableSql = "INSERT INTO users (first_name, second_name, date_of_birth, created_at) VALUES (?, ?, ?, ?)";
+        String securityTableSql = "INSERT INTO security (user_id, email, password, roles) VALUES (?, ?, ?, ?)";
+
+        try (Connection connection = BaseRepository.getConnection();
+             PreparedStatement preparedStatementForUser = connection.prepareStatement(userTableSql, PreparedStatement.RETURN_GENERATED_KEYS);
+             PreparedStatement preparedStatementForSecurity = connection.prepareStatement(securityTableSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            connection.setAutoCommit(false);
+            preparedStatementForUser.setString(1, registerDTO.getFirstName());
+            preparedStatementForUser.setString(2, registerDTO.getSecondName());
+            var dateOfBirth = DateUtils.convertStringToDate(registerDTO.getDateOfBirth());
+            preparedStatementForUser.setDate(3, DateUtils.convertUtilDateToSqlDate(dateOfBirth));
+            preparedStatementForUser.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatementForUser.executeUpdate();
+
+            try (ResultSet generatedKeys = preparedStatementForUser.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    long userId = generatedKeys.getLong(1);
+                    preparedStatementForSecurity.setLong(1, userId);
+                    preparedStatementForSecurity.setString(2, registerDTO.getEmail());
+                    preparedStatementForSecurity.setString(3, registerDTO.getPassword());
+                    preparedStatementForSecurity.setString(4, Set.of(Role.USER).toString());
+                    preparedStatementForSecurity.executeUpdate();
+                    connection.commit();
+                    return userId;
+                } else {
+                    throw new SQLException("Creating user failed, no ID obtained.");
+                }
+            }
+        } catch (SQLException e) {
+            // Handle any exceptions here
             e.printStackTrace();
             throw new RuntimeException(e);
         }

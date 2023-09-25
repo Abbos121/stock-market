@@ -2,6 +2,7 @@ package com.vention.stockmarket.service.impl;
 
 import com.vention.stockmarket.dto.response.ResponseDTO;
 import com.vention.stockmarket.domain.SecurityModel;
+import com.vention.stockmarket.exceptions.ResourceNotFoundException;
 import com.vention.stockmarket.repository.SecurityRepository;
 import com.vention.stockmarket.service.SecurityService;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +25,10 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public ResponseDTO<SecurityModel> getById(Long id) {
         var securityModel = repository.getById(id);
-        if (securityModel != null) {
-            return new ResponseDTO<>(true, securityModel);
-        } else {
-            return new ResponseDTO<>(false, 404, "User not found", null);
-        }
+        if (securityModel == null)
+            throw new ResourceNotFoundException("Security model not found with id : " + id);
+
+        return new ResponseDTO<>(true, securityModel);
     }
 
     @Override

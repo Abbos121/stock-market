@@ -5,8 +5,8 @@ spring:
     password: 6040
     driver-class-name: org.postgresql.Driver
 
-#springdoc:
-#  swagger-ui:
-#    tags-sorter: alpha
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
 
 
