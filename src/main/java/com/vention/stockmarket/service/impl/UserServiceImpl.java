@@ -18,8 +18,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
 
-    private final SecurityRepository securityRepository;
-
     @Override
     public ResponseDTO<Long> create(UserModel userModel) {
         Long userId = repository.create(userModel);
@@ -28,13 +26,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseDTO<Long> register(UserRegisterDTO registerDTO) {
-        /*
-        UserModel user = new UserModel(registerDTO.getFirstName(), registerDTO.getSecondName(),
-                DateUtils.convertStringToDate(registerDTO.getDateOfBirth()), LocalDateTime.now());
-        Long userId = repository.create(user);
-        SecurityModel security = new SecurityModel(userId, registerDTO.getEmail(), registerDTO.getPassword());
-        securityRepository.create(security);
-        */
+//        UserModel user = new UserModel(registerDTO.getFirstName(), registerDTO.getSecondName(),
+//                DateUtils.convertStringToDate(registerDTO.getDateOfBirth()), LocalDateTime.now());
+//        Long userId = repository.create(user);
+//        SecurityModel security = new SecurityModel(userId, registerDTO.getEmail(), registerDTO.getPassword());
+//        securityRepository.create(security);
+
         var userId = repository.registerUser(registerDTO);
         return new ResponseDTO<>(true, 200, "registered successfully", userId);
     }
@@ -42,8 +39,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseDTO<UserModel> getById(Long id) {
         UserModel user = repository.getById(id);
-        if (user == null)
+        if (user == null) {
             throw new ResourceNotFoundException("User not found with id : " + id);
+        }
         return new ResponseDTO<>(true, user);
     }
 

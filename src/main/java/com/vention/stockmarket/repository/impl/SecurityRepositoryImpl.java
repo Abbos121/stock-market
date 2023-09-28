@@ -25,7 +25,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
         String sql = "INSERT INTO security (user_id, email, password, roles) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = BaseRepository.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement preparedStatement =
+                     connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, security.getUserId());
             preparedStatement.setString(2, security.getEmail());
             preparedStatement.setString(3, security.getPassword());
