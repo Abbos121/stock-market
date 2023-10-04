@@ -16,7 +16,8 @@ public interface StockServiceFeign {
 
     @GetMapping("/stocks")
     GeneralStockResponseDTO<List<StockInfoResponseDTO>> getAllStocks(@RequestHeader("X-RapidAPI-Key") String key,
-                                                                     @RequestHeader("X-RapidAPI-Host") String host);
+                                                                     @RequestHeader("X-RapidAPI-Host") String host,
+                                                                     @RequestParam("exchange") String exchange);
 
     @GetMapping("/profile")
     CompanyInfoResponseDTO getLatestCompanyInfo(@RequestHeader("X-RapidAPI-Key") String key,

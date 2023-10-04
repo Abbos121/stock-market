@@ -26,12 +26,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseDTO<Long> register(UserRegisterDTO registerDTO) {
-//        UserModel user = new UserModel(registerDTO.getFirstName(), registerDTO.getSecondName(),
-//                DateUtils.convertStringToDate(registerDTO.getDateOfBirth()), LocalDateTime.now());
-//        Long userId = repository.create(user);
-//        SecurityModel security = new SecurityModel(userId, registerDTO.getEmail(), registerDTO.getPassword());
-//        securityRepository.create(security);
-
         var userId = repository.registerUser(registerDTO);
         return new ResponseDTO<>(true, 200, "registered successfully", userId);
     }

@@ -26,10 +26,10 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    @Scheduled(cron = "0 55 11 * * ?")
+    @Scheduled(cron = "0 0 5 * * ?")
     public void updateStockList() {
         var allStocks = stockServiceFeign
-                .getAllStocks(RAPID_API_KEY, RAPID_API_HOST).getData();
+                .getAllStocks(RAPID_API_KEY, RAPID_API_HOST, "NASDAQ").getData();
 
         var stocks = allStocks.stream().map(dto -> {
             StockModel stock = new StockModel(dto.getSymbol(), dto.getName(), dto.getCurrency(),
