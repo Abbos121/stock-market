@@ -81,45 +81,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void update(UserModel user) {
-        String sql = "UPDATE users SET first_name = ?, second_name = ?, date_of_birth = ?, updated_at = ? WHERE id = ?";
-
-        try (Connection connection = BaseRepository.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, user.getFirstName());
-            preparedStatement.setString(2, user.getSecondName());
-            preparedStatement.setDate(3, DateUtils.convertUtilDateToSqlDate(user.getDateOfBirth()));
-            preparedStatement.setTimestamp(4, Timestamp.valueOf(user.getUpdatedAt()));
-            preparedStatement.setLong(5, user.getId());
-
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows == 0)
-                throw new SQLException("Updating user failed, no rows affected.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void delete(Long id) {
-        String sql = "DELETE FROM users WHERE id = ?";
-
-        try (Connection connection = BaseRepository.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, id);
-
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == 0)
-                throw new SQLException("Deleting user failed, no rows affected.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public Long registerUser(UserRegisterDTO registerDTO) {
         String userTableSql = "INSERT INTO users (first_name, second_name, date_of_birth, created_at) VALUES (?, ?, ?, ?)";
         String securityTableSql = "INSERT INTO security (user_id, email, password, roles) VALUES (?, ?, ?, ?)";
@@ -157,6 +118,43 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public void update(UserModel user) {
+        String sql = "UPDATE users SET first_name = ?, second_name = ?, date_of_birth = ?, updated_at = ? WHERE id = ?";
+
+        try (Connection connection = BaseRepository.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, user.getFirstName());
+            preparedStatement.setString(2, user.getSecondName());
+            preparedStatement.setDate(3, DateUtils.convertUtilDateToSqlDate(user.getDateOfBirth()));
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(user.getUpdatedAt()));
+            preparedStatement.setLong(5, user.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Updating user failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void delete(Long id) {
+        String sql = "DELETE FROM users WHERE id = ?";
+
+        try (Connection connection = BaseRepository.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
     public List<UserModel> getAll() {
         String sql = "SELECT * FROM users";
         List<UserModel> users = new ArrayList<>();
@@ -178,7 +176,6 @@ public class UserRepositoryImpl implements UserRepository {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-
         return users;
     }
 }

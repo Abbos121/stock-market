@@ -25,8 +25,9 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public ResponseDTO<SecurityModel> getById(Long id) {
         var securityModel = repository.getById(id);
-        if (securityModel == null)
+        if (securityModel == null) {
             throw new ResourceNotFoundException("Security model not found with id : " + id);
+        }
 
         return new ResponseDTO<>(true, securityModel);
     }
