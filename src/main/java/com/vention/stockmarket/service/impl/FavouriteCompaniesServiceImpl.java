@@ -1,6 +1,5 @@
 package com.vention.stockmarket.service.impl;
 
-import com.vention.stockmarket.domain.StockModel;
 import com.vention.stockmarket.dto.response.FavouriteCompanyDTO;
 import com.vention.stockmarket.repository.FavouriteCompaniesRepository;
 import com.vention.stockmarket.repository.SecurityRepository;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
