@@ -9,4 +9,7 @@ public interface StockRepository {
     void saveAllStocks(List<StockModel> stocks);
 
     List<StockModel> findAll();
+    List<StockModel> findAll(List<Long> idList);
+
+    StockModel findBySymbol(String symbol);
 }

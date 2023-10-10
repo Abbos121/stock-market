@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface SecurityRepository extends BaseRepository<SecurityModel> {
     List<SecurityModel> getAll();
+
+    SecurityModel getByEmail(String email);
 }

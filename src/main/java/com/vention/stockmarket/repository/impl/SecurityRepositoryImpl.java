@@ -2,7 +2,8 @@ package com.vention.stockmarket.repository.impl;
 
 import com.vention.stockmarket.domain.SecurityModel;
 import com.vention.stockmarket.enumuration.Role;
-import com.vention.stockmarket.repository.BaseRepository;
+import com.vention.stockmarket.exceptions.ResourceNotFoundException;
+import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.SecurityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -24,7 +25,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
     public Long create(SecurityModel security) {
         String sql = "INSERT INTO security (user_id, email, password, roles) VALUES (?, ?, ?, ?)";
 
-        try (Connection connection = BaseRepository.getConnection();
+        try (Connection connection = DatabaseCredentials.getConnection();
              PreparedStatement preparedStatement =
                      connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, security.getUserId());
@@ -50,7 +51,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
     public SecurityModel getById(Long id) {
         String sql = "SELECT * FROM security WHERE id = ?";
 
-        try (Connection connection = BaseRepository.getConnection();
+        try (Connection connection = DatabaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
 
@@ -78,7 +79,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
     public void update(SecurityModel security) {
         String sql = "UPDATE security SET user_id = ?, email = ?, password = ?, roles = ?, updated_at = ? WHERE id = ?";
 
-        try (Connection connection = BaseRepository.getConnection();
+        try (Connection connection = DatabaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, security.getUserId());
             preparedStatement.setString(2, security.getEmail());
@@ -101,7 +102,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
     public void delete(Long id) {
         String sql = "DELETE FROM security WHERE id = ?";
 
-        try (Connection connection = BaseRepository.getConnection();
+        try (Connection connection = DatabaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
 
@@ -120,7 +121,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
         String sql = "SELECT * FROM security";
         List<SecurityModel> securities = new ArrayList<>();
 
-        try (Connection connection = BaseRepository.getConnection();
+        try (Connection connection = DatabaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
@@ -138,6 +139,33 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             throw new RuntimeException(e);
         }
         return securities;
+    }
+
+    @Override
+    public SecurityModel getByEmail(String email) {
+        String sql = "SELECT * FROM security where email = ?";
+        try (Connection connection = DatabaseCredentials.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                SecurityModel security = new SecurityModel();
+                security.setId(resultSet.getLong("id"));
+                security.setUserId(resultSet.getLong("user_id"));
+                security.setEmail(resultSet.getString("email"));
+                security.setPassword(resultSet.getString("password"));
+                var roles = Role.convertFromStringToSet(resultSet.getString("roles"));
+                security.setRoles(roles);
+                return security;
+            } else {
+                throw new ResourceNotFoundException(email + "email not found");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
 

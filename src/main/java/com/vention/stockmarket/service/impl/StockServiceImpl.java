@@ -26,7 +26,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    @Scheduled(cron = "0 0 5 * * ?")
+    @Scheduled(cron = "0 41 10 * * ?")
     public void updateStockList() {
         var allStocks = stockServiceFeign
                 .getAllStocks(RAPID_API_KEY, RAPID_API_HOST, "NASDAQ").getData();
@@ -38,6 +38,7 @@ public class StockServiceImpl implements StockService {
         }).toList();
 
         repository.saveAllStocks(stocks);
+        System.out.println("working cool");
     }
 
     @Override

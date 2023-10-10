@@ -8,4 +8,6 @@ import java.util.List;
 public interface UserRepository extends BaseRepository<UserModel> {
     Long registerUser(UserRegisterDTO registerDTO);
     List<UserModel> getAll();
+
+    UserModel getByUserId(Long id);
 }
