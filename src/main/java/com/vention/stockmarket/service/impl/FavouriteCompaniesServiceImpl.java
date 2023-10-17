@@ -23,7 +23,7 @@ public class FavouriteCompaniesServiceImpl implements FavouriteCompaniesService 
     public void addToFavorites(String username, String companyName) {
         var byEmail = securityRepository.getByEmail(username);
         var bySymbol = stockRepository.findBySymbol(companyName);
-        repository.add(byEmail.getUserId(), bySymbol.getId());
+        repository.add(byEmail.getUserId(), bySymbol.getSymbol());
     }
 
     @Override
@@ -36,9 +36,9 @@ public class FavouriteCompaniesServiceImpl implements FavouriteCompaniesService 
     }
 
     @Override
-    public void delete(String username, String companyName) {
+    public void delete(String username, String symbol) {
         var byEmail = securityRepository.getByEmail(username);
-        var bySymbol = stockRepository.findBySymbol(companyName);
-        repository.delete(byEmail.getUserId(), bySymbol.getId());
+        var bySymbol = stockRepository.findBySymbol(symbol);
+        repository.delete(byEmail.getUserId(), bySymbol.getSymbol());
     }
 }

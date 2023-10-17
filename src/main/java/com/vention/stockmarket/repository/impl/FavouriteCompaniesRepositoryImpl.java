@@ -1,5 +1,6 @@
 package com.vention.stockmarket.repository.impl;
 
+import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.exceptions.CustomSQLException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.FavouriteCompaniesRepository;
@@ -17,15 +18,15 @@ import java.util.List;
 public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepository {
 
     @Override
-    public void add(Long userId, Long companyId) {
-        if (existsByUserIdAndCompanyId(userId, companyId)) {
-            throw new RuntimeException("resource already exists with company-id : " + companyId);
+    public void add(Long userId, String companySymbol) {
+        if (existsByUserIdAndCompanySymbol(userId, companySymbol)) {
+            throw new CustomResourceNotFoundException("resource already exists with company-id : " + companySymbol);
         }
-        String sql = "insert into favourite_companies (user_id, company_id) values (?, ?)";
+        String sql = "insert into favourite_companies (user_id, company_symbol) values (?, ?)";
         try (Connection connection = DatabaseCredentials.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, userId);
-            preparedStatement.setLong(2, companyId);
+            preparedStatement.setString(2, companySymbol);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             log.error(e.getMessage());
@@ -33,15 +34,15 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
     }
 
     @Override
-    public void delete(Long userId, Long companyId) {
-        if (!existsByUserIdAndCompanyId(userId, companyId)) {
-            throw new RuntimeException("resource not found with company-id : " + companyId);
+    public void delete(Long userId, String companySymbol) {
+        if (!existsByUserIdAndCompanySymbol(userId, companySymbol)) {
+            throw new CustomResourceNotFoundException("resource not found with company-symbol : " + companySymbol);
         }
-        String sql = "delete from favourite_companies where user_id = ? and company_id = ?";
+        String sql = "delete from favourite_companies where user_id = ? and company_symbol = ?";
         try (Connection connection = DatabaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, userId);
-            preparedStatement.setLong(2, companyId);
+            preparedStatement.setString(2, companySymbol);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             log.error(e.getMessage());
@@ -50,7 +51,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
 
     @Override
     public List<Long> findByUserId(Long userId) {
-        String sql = "select company_id from favourite_companies where user_id = ?";
+        String sql = "select company_symbol from favourite_companies where user_id = ?";
         List<Long> companiesIdList = new ArrayList<>();
         try(Connection connection = DatabaseCredentials.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -66,13 +67,13 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
     }
 
     @Override
-    public boolean existsByUserIdAndCompanyId(Long userId, Long companyId) {
-        String sql = "select * from favourite_companies where user_id = ? and company_id = ?";
+    public boolean existsByUserIdAndCompanySymbol(Long userId, String companySymbol) {
+        String sql = "select * from favourite_companies where user_id = ? and company_symbol = ?";
 
         try(Connection connection = DatabaseCredentials.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, userId);
-            preparedStatement.setLong(2, companyId);
+            preparedStatement.setString(2, companySymbol);
             var resultSet = preparedStatement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {

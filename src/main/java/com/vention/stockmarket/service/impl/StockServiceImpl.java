@@ -38,7 +38,6 @@ public class StockServiceImpl implements StockService {
         var stocks = allStocks.stream().map(dto -> {
             StockModel stock = new StockModel(dto.getSymbol(), dto.getName(), dto.getCurrency(),
                     dto.getExchange(), dto.getMixCode(), dto.getCountry(), dto.getType());
-
             setStockPrice(numberOfStocksHavingPrice, stock, dto);
             return stock;
         }).toList();
