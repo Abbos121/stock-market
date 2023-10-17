@@ -16,6 +16,7 @@ public class StockModel {
     private String mixCode;
     private String country;
     private String type;
+    private double price;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

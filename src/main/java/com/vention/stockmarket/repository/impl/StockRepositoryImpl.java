@@ -25,17 +25,8 @@ public class StockRepositoryImpl implements StockRepository {
 
     @Override
     public void saveAllStocks(List<StockModel> stocks) {
-        String sql = "INSERT INTO stocks (symbol, name, currency, exchange, mix_code, country, type) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?) " +
-                "ON CONFLICT (symbol) " +
-                "DO UPDATE SET " +
-                "name = EXCLUDED.name, " +
-                "currency = EXCLUDED.currency, " +
-                "exchange = EXCLUDED.exchange, " +
-                "mix_code = EXCLUDED.mix_code, " +
-                "country = EXCLUDED.country, " +
-                "type = EXCLUDED.type, " +
-                "updated_at = now()";
+        String sql = "INSERT INTO stocks (symbol, name, currency, exchange, mix_code, country, price, type) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?) ";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -47,7 +38,8 @@ public class StockRepositoryImpl implements StockRepository {
                 preparedStatement.setString(4, stock.getExchange());
                 preparedStatement.setString(5, stock.getMixCode());
                 preparedStatement.setString(6, stock.getCountry());
-                preparedStatement.setString(7, stock.getType());
+                preparedStatement.setDouble(7, stock.getPrice());
+                preparedStatement.setString(8, stock.getType());
                 preparedStatement.addBatch();
             }
 
