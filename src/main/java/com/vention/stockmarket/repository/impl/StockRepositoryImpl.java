@@ -1,8 +1,10 @@
 package com.vention.stockmarket.repository.impl;
 
 import com.vention.stockmarket.domain.StockModel;
-import com.vention.stockmarket.exceptions.ResourceNotFoundException;
+import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
+import com.vention.stockmarket.exceptions.CustomSQLException;
 import com.vention.stockmarket.repository.StockRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -17,6 +19,7 @@ import static com.vention.stockmarket.repository.BaseRepository.DB_PASSWORD;
 import static com.vention.stockmarket.repository.BaseRepository.DB_URL;
 import static com.vention.stockmarket.repository.BaseRepository.DB_USERNAME;
 
+@Slf4j
 @Repository
 public class StockRepositoryImpl implements StockRepository {
 
@@ -50,7 +53,7 @@ public class StockRepositoryImpl implements StockRepository {
 
             preparedStatement.executeBatch();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 
@@ -77,7 +80,7 @@ public class StockRepositoryImpl implements StockRepository {
                 stocks.add(stock);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception appropriately
+            log.error(e.getMessage()); // Handle the exception appropriately
         }
 
         return stocks;
@@ -106,7 +109,7 @@ public class StockRepositoryImpl implements StockRepository {
                 stocks.add(stock);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception appropriately
+            log.error(e.getMessage()); // Handle the exception appropriately
         }
 
         return stocks;
@@ -134,11 +137,11 @@ public class StockRepositoryImpl implements StockRepository {
                 stock.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                 return stock;
             } else {
-                throw new ResourceNotFoundException("stock not found with symbol : " + symbol);
+                throw new CustomResourceNotFoundException("stock not found with symbol : " + symbol);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception appropriately
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new CustomSQLException();
         }
     }
 

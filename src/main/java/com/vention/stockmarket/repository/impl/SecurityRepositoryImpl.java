@@ -2,10 +2,12 @@ package com.vention.stockmarket.repository.impl;
 
 import com.vention.stockmarket.domain.SecurityModel;
 import com.vention.stockmarket.enumuration.Role;
-import com.vention.stockmarket.exceptions.ResourceNotFoundException;
+import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
+import com.vention.stockmarket.exceptions.CustomSQLException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.SecurityRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class SecurityRepositoryImpl implements SecurityRepository {
@@ -42,8 +45,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new CustomSQLException();
         }
     }
 
@@ -70,8 +73,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new CustomSQLException();
         }
     }
 
@@ -93,8 +96,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 throw new SQLException("Updating security failed, no rows affected.");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
     }
 
@@ -111,8 +113,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 throw new SQLException("Deleting security failed, no rows affected.");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
     }
 
@@ -135,8 +136,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 securities.add(security);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
         return securities;
     }
@@ -160,11 +160,11 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 security.setRoles(roles);
                 return security;
             } else {
-                throw new ResourceNotFoundException(email + "email not found");
+                throw new CustomResourceNotFoundException(email + "email not found");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new CustomSQLException();
         }
     }
 

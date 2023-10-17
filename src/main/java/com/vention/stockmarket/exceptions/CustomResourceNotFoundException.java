@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class ResourceNotFoundException extends RuntimeException {
+public class CustomResourceNotFoundException extends RuntimeException {
     String message;
 }

@@ -1,7 +1,9 @@
 package com.vention.stockmarket.repository.impl;
 
+import com.vention.stockmarket.exceptions.CustomSQLException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.FavouriteCompaniesRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepository {
 
     @Override
@@ -25,7 +28,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
             preparedStatement.setLong(2, companyId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
     }
 
@@ -41,7 +44,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
             preparedStatement.setLong(2, companyId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
     }
 
@@ -57,7 +60,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
                 companiesIdList.add(resultSet.getLong("company_id"));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
         return companiesIdList;
     }
@@ -73,7 +76,8 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
             var resultSet = preparedStatement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new CustomSQLException();
         }
     }
 }

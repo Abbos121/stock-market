@@ -3,8 +3,7 @@ package com.vention.stockmarket.service.impl;
 import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.dto.response.ResponseDTO;
-import com.vention.stockmarket.exceptions.ResourceNotFoundException;
-import com.vention.stockmarket.repository.SecurityRepository;
+import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.UserRepository;
 import com.vention.stockmarket.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class UserServiceImpl implements UserService {
     public ResponseDTO<UserModel> getById(Long id) {
         UserModel user = repository.getById(id);
         if (user == null) {
-            throw new ResourceNotFoundException("User not found with id : " + id);
+            throw new CustomResourceNotFoundException("User not found with id : " + id);
         }
         return new ResponseDTO<>(true, user);
     }

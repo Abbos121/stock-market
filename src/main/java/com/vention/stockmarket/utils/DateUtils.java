@@ -15,7 +15,7 @@ public class DateUtils {
         try {
             return (DATE_FORMATTER.parse(date));
         } catch (ParseException e) {
-            e.printStackTrace();
+            
         }
         return null;
     }

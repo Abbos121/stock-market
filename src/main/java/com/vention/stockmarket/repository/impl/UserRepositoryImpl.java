@@ -3,12 +3,13 @@ package com.vention.stockmarket.repository.impl;
 import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.enumuration.Role;
-import com.vention.stockmarket.exceptions.ResourceNotFoundException;
-import com.vention.stockmarket.repository.BaseRepository;
+import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
+import com.vention.stockmarket.exceptions.CustomSQLException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.UserRepository;
 import com.vention.stockmarket.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -21,10 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
-    
+
     @Override
     public Long create(UserModel user) {
         String sql = "INSERT INTO users (first_name, second_name, date_of_birth, created_at) VALUES (?, ?, ?, ?)";
@@ -46,9 +48,8 @@ public class UserRepositoryImpl implements UserRepository {
                 }
             }
         } catch (SQLException e) {
-            // Handle any exceptions here
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new CustomSQLException();
         }
     }
 
@@ -77,8 +78,8 @@ public class UserRepositoryImpl implements UserRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new CustomSQLException();
         }
     }
 
@@ -113,9 +114,8 @@ public class UserRepositoryImpl implements UserRepository {
                 }
             }
         } catch (SQLException e) {
-            // Handle any exceptions here
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new CustomSQLException();
         }
     }
 
@@ -136,8 +136,8 @@ public class UserRepositoryImpl implements UserRepository {
                 throw new SQLException("Updating user failed, no rows affected.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+
+            log.error(e.getMessage());
         }
     }
 
@@ -150,8 +150,8 @@ public class UserRepositoryImpl implements UserRepository {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+
+            log.error(e.getMessage());
         }
     }
 
@@ -175,8 +175,8 @@ public class UserRepositoryImpl implements UserRepository {
                 users.add(user);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+
+            log.error(e.getMessage());
         }
         return users;
     }
@@ -186,7 +186,7 @@ public class UserRepositoryImpl implements UserRepository {
         String sql = "SELECT * FROM users where id = ?";
 
         try (Connection connection = DatabaseCredentials.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
 
             var resultSet = preparedStatement.executeQuery();
@@ -200,12 +200,12 @@ public class UserRepositoryImpl implements UserRepository {
                 user.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
                 return user;
             } else {
-                throw new ResourceNotFoundException("user not found with id : " + id);
+                throw new CustomResourceNotFoundException("user not found with id : " + id);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new CustomSQLException();
         }
-
     }
 
 
