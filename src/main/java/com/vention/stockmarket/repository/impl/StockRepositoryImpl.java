@@ -140,7 +140,7 @@ public class StockRepositoryImpl implements StockRepository {
     private String createSqlUsingIn(String sql, List<String> symbols) {
         StringBuilder placeholders = new StringBuilder();
         for (int i = 0; i < symbols.size(); i++) {
-            placeholders.append(symbols.get(i));
+            placeholders.append("'" + symbols.get(i) + "'");
             if (i != symbols.size() - 1) {
                 placeholders.append(", ");
             }

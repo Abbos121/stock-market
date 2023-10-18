@@ -7,13 +7,17 @@ import com.vention.stockmarket.repository.FavouriteCompaniesRepository;
 import com.vention.stockmarket.repository.SecurityRepository;
 import com.vention.stockmarket.service.EmailService;
 import com.vention.stockmarket.service.StockService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
 
 import java.util.List;
 
@@ -31,7 +35,7 @@ public class EmailServiceImpl implements EmailService {
 
 
     @Override
-    @Scheduled(cron = "0 24 13 * * ?")
+    @Scheduled(cron = "0 34 13 * * ?")
     public void sendEmailToUsersAboutFavouriteCompanies() {
         securityRepository.getAll().forEach(securityModel -> {
             var email = securityModel.getEmail();
@@ -43,7 +47,6 @@ public class EmailServiceImpl implements EmailService {
 
             sendEmailToUser(email, companiesInfo);
         });
-
     }
 
     public void sendEmailToUser(String userEmail, List<CompanyInfoResponseDTO> companyInfo) {
@@ -64,23 +67,23 @@ public class EmailServiceImpl implements EmailService {
 
         // Iterate through the list of companies and add their information to the email body
         for (CompanyInfoResponseDTO companyInfo : companies) {
-            emailBody.append("<h2>").append(companyInfo.getName()).append("</h2>");
-            emailBody.append("<p><b>Symbol:</b> ").append(companyInfo.getSymbol()).append("</p>");
-            emailBody.append("<p><b>Exchange:</b> ").append(companyInfo.getExchange()).append("</p>");
-            emailBody.append("<p><b>MIC Code:</b> ").append(companyInfo.getMixCode()).append("</p>");
-            emailBody.append("<p><b>Sector:</b> ").append(companyInfo.getSector()).append("</p>");
-            emailBody.append("<p><b>Industry:</b> ").append(companyInfo.getIndustry()).append("</p>");
-            emailBody.append("<p><b>Employees:</b> ").append(companyInfo.getEmployees()).append("</p>");
-            emailBody.append("<p><b>Website:</b> <a href=\"").append(companyInfo.getWebsite()).append("\">").append(companyInfo.getWebsite()).append("</a></p>");
-            emailBody.append("<p><b>Description:</b> ").append(companyInfo.getDescription()).append("</p>");
-            emailBody.append("<p><b>Type:</b> ").append(companyInfo.getType()).append("</p>");
-            emailBody.append("<p><b>CEO:</b> ").append(companyInfo.getCeo()).append("</p>");
-            emailBody.append("<p><b>Address:</b> ").append(companyInfo.getAddress()).append("</p>");
-            emailBody.append("<p><b>City:</b> ").append(companyInfo.getCity()).append("</p>");
-            emailBody.append("<p><b>Zip:</b> ").append(companyInfo.getZip()).append("</p>");
-            emailBody.append("<p><b>State:</b> ").append(companyInfo.getState()).append("</p>");
-            emailBody.append("<p><b>Country:</b> ").append(companyInfo.getCountry()).append("</p>");
-            emailBody.append("<p><b>Phone:</b> ").append(companyInfo.getPhone()).append("</p>");
+            emailBody.append("<h2>").append(companyInfo.getName()).append("</h2>").append("\n");
+            emailBody.append("<p><b>Symbol:</b> ").append(companyInfo.getSymbol()).append("</p>").append("\n");
+            emailBody.append("<p><b>Exchange:</b> ").append(companyInfo.getExchange()).append("</p>").append("\n");
+            emailBody.append("<p><b>MIC Code:</b> ").append(companyInfo.getMixCode()).append("</p>").append("\n");
+            emailBody.append("<p><b>Sector:</b> ").append(companyInfo.getSector()).append("</p>").append("\n");
+            emailBody.append("<p><b>Industry:</b> ").append(companyInfo.getIndustry()).append("</p>").append("\n");
+            emailBody.append("<p><b>Employees:</b> ").append(companyInfo.getEmployees()).append("</p>").append("\n");
+            emailBody.append("<p><b>Website:</b> <a href=\"").append(companyInfo.getWebsite()).append("\">").append(companyInfo.getWebsite()).append("</a></p>").append("\n");
+            emailBody.append("<p><b>Description:</b> ").append(companyInfo.getDescription()).append("</p>").append("\n");
+            emailBody.append("<p><b>Type:</b> ").append(companyInfo.getType()).append("</p>").append("\n");
+            emailBody.append("<p><b>CEO:</b> ").append(companyInfo.getCeo()).append("</p>").append("\n");
+            emailBody.append("<p><b>Address:</b> ").append(companyInfo.getAddress()).append("</p>").append("\n");
+            emailBody.append("<p><b>City:</b> ").append(companyInfo.getCity()).append("</p>").append("\n");
+            emailBody.append("<p><b>Zip:</b> ").append(companyInfo.getZip()).append("</p>").append("\n");
+            emailBody.append("<p><b>State:</b> ").append(companyInfo.getState()).append("</p>").append("\n");
+            emailBody.append("<p><b>Country:</b> ").append(companyInfo.getCountry()).append("</p>").append("\n");
+            emailBody.append("<p><b>Phone:</b> ").append(companyInfo.getPhone()).append("</p>").append("\n");
             emailBody.append("<hr>");
         }
 

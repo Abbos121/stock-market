@@ -28,8 +28,8 @@ public class FavouriteCompaniesServiceImpl implements FavouriteCompaniesService 
     @Override
     public List<FavouriteCompanyDTO> getAllByUsername(String username) {
         var byEmail = securityRepository.getByEmail(username);
-        var companyIdList = repository.findByUserId(byEmail.getUserId());
-        var all = stockRepository.findAll(companyIdList);
+        var companiesSymbols = repository.findByUserId(byEmail.getUserId());
+        var all = stockRepository.findAll(companiesSymbols);
         var favouriteCompanies = all.stream().map(FavouriteCompanyDTO::new).toList();
         return favouriteCompanies;
     }
