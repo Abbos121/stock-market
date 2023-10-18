@@ -50,15 +50,15 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
     }
 
     @Override
-    public List<Long> findByUserId(Long userId) {
+    public List<String> findByUserId(Long userId) {
         String sql = "select company_symbol from favourite_companies where user_id = ?";
-        List<Long> companiesIdList = new ArrayList<>();
+        List<String> companiesIdList = new ArrayList<>();
         try(Connection connection = DatabaseCredentials.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, userId);
             var resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                companiesIdList.add(resultSet.getLong("company_id"));
+                companiesIdList.add(resultSet.getString("company_symbol"));
             }
         } catch (SQLException e) {
             log.error(e.getMessage());

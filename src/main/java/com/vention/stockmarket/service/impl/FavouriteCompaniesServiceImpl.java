@@ -16,7 +16,6 @@ import java.util.List;
 public class FavouriteCompaniesServiceImpl implements FavouriteCompaniesService {
 
     private final FavouriteCompaniesRepository repository;
-    private final UserRepository userRepository;
     private final SecurityRepository securityRepository;
     private final StockRepository stockRepository;
     @Override

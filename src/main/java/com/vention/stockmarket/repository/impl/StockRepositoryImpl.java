@@ -79,8 +79,8 @@ public class StockRepositoryImpl implements StockRepository {
     }
 
     @Override
-    public List<StockModel> findAll(List<Long> idList) {
-        String sql = createSqlUsingIn("SELECT * FROM stocks where id in (?)", idList);
+    public List<StockModel> findAll(List<String> companySymbols) {
+        String sql = createSqlUsingIn("SELECT * FROM stocks where symbol in (?)", companySymbols);
 
         List<StockModel> stocks = new ArrayList<>();
 
@@ -137,11 +137,11 @@ public class StockRepositoryImpl implements StockRepository {
         }
     }
 
-    private String createSqlUsingIn(String sql, List<Long> idList) {
+    private String createSqlUsingIn(String sql, List<String> symbols) {
         StringBuilder placeholders = new StringBuilder();
-        for (int i = 0; i < idList.size(); i++) {
-            placeholders.append(idList.get(i));
-            if (i != idList.size() - 1) {
+        for (int i = 0; i < symbols.size(); i++) {
+            placeholders.append(symbols.get(i));
+            if (i != symbols.size() - 1) {
                 placeholders.append(", ");
             }
         }
