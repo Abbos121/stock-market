@@ -15,4 +15,3 @@ spring:
           auth: true
           starttls:
             enable: true
-

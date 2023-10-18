@@ -19,17 +19,17 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public ResponseDTO<Long> create(SecurityModel securityModel) {
         var userId = repository.create(securityModel);
-        return new ResponseDTO<>(true, userId);
+        return new ResponseDTO<>(true, userId.get());
     }
 
     @Override
     public ResponseDTO<SecurityModel> getById(Long id) {
         var securityModel = repository.getById(id);
-        if (securityModel == null) {
+        if (securityModel.isEmpty()) {
             throw new CustomResourceNotFoundException("Security model not found with id : " + id);
         }
 
-        return new ResponseDTO<>(true, securityModel);
+        return new ResponseDTO<>(true, securityModel.get());
     }
 
     @Override

@@ -26,13 +26,11 @@ import java.util.List;
 public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender javaMailSender;
-
     private final FavouriteCompaniesRepository favouriteCompaniesRepository;
     private final SecurityRepository securityRepository;
     private final StockService stockService;
     @Value("${spring.mail.username}")
     private String sender;
-
 
     @Override
     @Scheduled(cron = "0 34 13 * * ?")

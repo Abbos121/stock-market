@@ -1,15 +1,23 @@
 package com.vention.stockmarket.repository;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public interface DatabaseCredentials {
-    String DB_URL = "jdbc:postgresql://localhost:5432/stock-market";
-    String DB_USERNAME = "postgres";
-    String DB_PASSWORD = "6040";
+@Component
+public class DatabaseCredentials {
+    @Value("${spring.datasource.url}")
+    public String DB_URL;
+    @Value("${spring.datasource.username}")
+    public String DB_USERNAME;
+    @Value("${spring.datasource.password}")
+    public String DB_PASSWORD;
 
-    static Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
     }
 }

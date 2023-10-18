@@ -1,7 +1,6 @@
 package com.vention.stockmarket.exceptions.handler;
 
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
-import com.vention.stockmarket.exceptions.CustomSQLException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,19 +33,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomResourceNotFoundException.class)
     public ResponseEntity<String> handleResourceNotFoundExceptionClass(CustomResourceNotFoundException ex, WebRequest request) {
         String resBody = "Not found";
-        if (ex.getMessage() != null && !ex.getMessage().isEmpty())
+        if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
             resBody = ex.getMessage();
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(resBody);
-    }
-
-    // For catching Exception.class
-    @ExceptionHandler(CustomSQLException.class)
-    public ResponseEntity<String> handleSQLException(CustomSQLException ex, WebRequest request) {
-        String resBody = "Unexpected error, try again later!";
-        if (ex.getMessage() != null && !ex.getMessage().isEmpty())
-            resBody = ex.getMessage();
+        }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(resBody);
@@ -61,6 +50,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(resBody);
     }
-
 }
-

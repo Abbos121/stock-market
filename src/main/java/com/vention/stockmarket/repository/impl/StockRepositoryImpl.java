@@ -2,33 +2,32 @@ package com.vention.stockmarket.repository.impl;
 
 import com.vention.stockmarket.domain.StockModel;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
-import com.vention.stockmarket.exceptions.CustomSQLException;
+import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.StockRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.vention.stockmarket.repository.BaseRepository.DB_PASSWORD;
-import static com.vention.stockmarket.repository.BaseRepository.DB_URL;
-import static com.vention.stockmarket.repository.BaseRepository.DB_USERNAME;
+import java.util.Optional;
 
 @Slf4j
 @Repository
+@RequiredArgsConstructor
 public class StockRepositoryImpl implements StockRepository {
+    private final DatabaseCredentials databaseCredentials;
 
     @Override
     public void saveAllStocks(List<StockModel> stocks) {
         String sql = "INSERT INTO stocks (symbol, name, currency, exchange, mix_code, country, price, type) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?) ";
 
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             for (StockModel stock : stocks) {
@@ -54,7 +53,7 @@ public class StockRepositoryImpl implements StockRepository {
         String sql = "SELECT * FROM stocks";
         List<StockModel> stocks = new ArrayList<>();
 
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
@@ -84,7 +83,7 @@ public class StockRepositoryImpl implements StockRepository {
 
         List<StockModel> stocks = new ArrayList<>();
 
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -109,10 +108,10 @@ public class StockRepositoryImpl implements StockRepository {
 
 
     @Override
-    public StockModel findBySymbol(String symbol) {
+    public Optional<StockModel> findBySymbol(String symbol) {
         String sql = "SELECT * FROM stocks where symbol = ?";
 
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, symbol);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -127,13 +126,13 @@ public class StockRepositoryImpl implements StockRepository {
                 stock.setCountry(resultSet.getString("country"));
                 stock.setType(resultSet.getString("type"));
                 stock.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-                return stock;
+                return Optional.of(stock);
             } else {
                 throw new CustomResourceNotFoundException("stock not found with symbol : " + symbol);
             }
         } catch (SQLException e) {
             log.error(e.getMessage());
-            throw new CustomSQLException();
+            return Optional.empty();
         }
     }
 

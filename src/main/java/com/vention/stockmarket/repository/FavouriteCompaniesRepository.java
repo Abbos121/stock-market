@@ -2,7 +2,7 @@ package com.vention.stockmarket.repository;
 
 import java.util.List;
 
-public interface FavouriteCompaniesRepository extends DatabaseCredentials {
+public interface FavouriteCompaniesRepository {
     void add(Long userId, String companySymbol);
     void delete(Long userId, String companySymbol);
 

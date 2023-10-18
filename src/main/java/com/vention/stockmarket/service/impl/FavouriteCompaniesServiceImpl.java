@@ -21,14 +21,14 @@ public class FavouriteCompaniesServiceImpl implements FavouriteCompaniesService 
     @Override
     public void addToFavorites(String username, String companyName) {
         var byEmail = securityRepository.getByEmail(username);
-        var bySymbol = stockRepository.findBySymbol(companyName);
-        repository.add(byEmail.getUserId(), bySymbol.getSymbol());
+        var bySymbol = stockRepository.findBySymbol(companyName).get();
+        repository.add(byEmail.get().getUserId(), bySymbol.getSymbol());
     }
 
     @Override
     public List<FavouriteCompanyDTO> getAllByUsername(String username) {
         var byEmail = securityRepository.getByEmail(username);
-        var companiesSymbols = repository.findByUserId(byEmail.getUserId());
+        var companiesSymbols = repository.findByUserId(byEmail.get().getUserId());
         var all = stockRepository.findAll(companiesSymbols);
         var favouriteCompanies = all.stream().map(FavouriteCompanyDTO::new).toList();
         return favouriteCompanies;
@@ -37,7 +37,7 @@ public class FavouriteCompaniesServiceImpl implements FavouriteCompaniesService 
     @Override
     public void delete(String username, String symbol) {
         var byEmail = securityRepository.getByEmail(username);
-        var bySymbol = stockRepository.findBySymbol(symbol);
-        repository.delete(byEmail.getUserId(), bySymbol.getSymbol());
+        var bySymbol = stockRepository.findBySymbol(symbol).get();
+        repository.delete(byEmail.get().getUserId(), bySymbol.getSymbol());
     }
 }

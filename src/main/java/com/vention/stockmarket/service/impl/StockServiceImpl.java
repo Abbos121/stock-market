@@ -43,7 +43,6 @@ public class StockServiceImpl implements StockService {
         }).toList();
 
         repository.saveAllStocks(stocks);
-        System.out.println("working cool");
     }
 
     @Override
