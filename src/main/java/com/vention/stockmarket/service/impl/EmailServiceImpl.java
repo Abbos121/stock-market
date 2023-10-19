@@ -1,26 +1,26 @@
 package com.vention.stockmarket.service.impl;
 
-import com.vention.stockmarket.domain.SecurityModel;
 import com.vention.stockmarket.dto.response.CompanyInfoResponseDTO;
-import com.vention.stockmarket.feign.clients.StockServiceFeign;
 import com.vention.stockmarket.repository.FavouriteCompaniesRepository;
 import com.vention.stockmarket.repository.SecurityRepository;
 import com.vention.stockmarket.service.EmailService;
 import com.vention.stockmarket.service.StockService;
+import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
@@ -33,29 +33,31 @@ public class EmailServiceImpl implements EmailService {
     private String sender;
 
     @Override
-    @Scheduled(cron = "0 34 13 * * ?")
+    @Scheduled(cron = "0 13 11 * * ?")
     public void sendEmailToUsersAboutFavouriteCompanies() {
         securityRepository.getAll().forEach(securityModel -> {
             var email = securityModel.getEmail();
 
             var companiesInfo = favouriteCompaniesRepository
                     .findByUserId(securityModel.getUserId())
-                    .stream().map(symbol -> stockService.getLatestCompanyInfo(symbol))
+                    .stream().map(stockService::getLatestCompanyInfo)
                     .toList();
-
-            sendEmailToUser(email, companiesInfo);
+            try {
+                if (!companiesInfo.isEmpty()) {
+                    sendEmailToUser(email, companiesInfo);
+                }
+            } catch (MessagingException e) {
+                log.error("Mail exception : " + e.getMessage());
+            }
         });
     }
 
-    public void sendEmailToUser(String userEmail, List<CompanyInfoResponseDTO> companyInfo) {
-        SimpleMailMessage mailMessage
-                = new SimpleMailMessage();
-
-        mailMessage.setFrom(sender);
-        mailMessage.setTo(userEmail);
-        mailMessage.setSubject("Detailed info about your favourite companies");
-        mailMessage.setText(makeEmailBody(companyInfo));
-
+    public void sendEmailToUser(String userEmail, List<CompanyInfoResponseDTO> companiesInfo) throws MessagingException {
+        MimeMessage mailMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true);
+        helper.setTo(userEmail);
+        helper.setSubject("Detailed info about your favourite companies");
+        helper.setText(makeEmailBody(companiesInfo), true);
         javaMailSender.send(mailMessage);
     }
 

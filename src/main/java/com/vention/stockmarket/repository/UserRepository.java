@@ -9,6 +9,5 @@ import java.util.Optional;
 public interface UserRepository extends BaseRepository<UserModel> {
     Optional<Long> registerUser(UserRegisterDTO registerDTO);
     List<UserModel> getAll();
-
     Optional<UserModel> getByUserId(Long id);
 }
