@@ -4,9 +4,3 @@ server:
 spring:
   profiles:
     active: Local
-
-
-openapi:
-  title: Stock Market
-  version: v3
-  description: Stock market APIs

@@ -3,14 +3,14 @@ package com.vention.stockmarket.service.impl;
 import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.dto.response.ResponseDTO;
-import com.vention.stockmarket.exceptions.ResourceNotFoundException;
-import com.vention.stockmarket.repository.SecurityRepository;
+import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.UserRepository;
 import com.vention.stockmarket.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,23 +20,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseDTO<Long> create(UserModel userModel) {
-        Long userId = repository.create(userModel);
-        return new ResponseDTO<>(true, userId);
+        Optional<Long> userId = repository.create(userModel);
+        return new ResponseDTO<>(true, userId.get());
     }
 
     @Override
     public ResponseDTO<Long> register(UserRegisterDTO registerDTO) {
         var userId = repository.registerUser(registerDTO);
-        return new ResponseDTO<>(true, 200, "registered successfully", userId);
+        return new ResponseDTO<>(true, 200, "registered successfully", userId.get());
     }
 
     @Override
     public ResponseDTO<UserModel> getById(Long id) {
-        UserModel user = repository.getById(id);
-        if (user == null) {
-            throw new ResourceNotFoundException("User not found with id : " + id);
+        Optional<UserModel> user = repository.getById(id);
+        if (user.isEmpty()) {
+            throw new CustomResourceNotFoundException("User not found with id : " + id);
         }
-        return new ResponseDTO<>(true, user);
+        return new ResponseDTO<>(true, user.get());
     }
 
     @Override

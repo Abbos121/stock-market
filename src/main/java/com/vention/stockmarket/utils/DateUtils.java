@@ -1,5 +1,7 @@
 package com.vention.stockmarket.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,6 +9,7 @@ import java.util.Date;
 /**
  * A utility class for working with dates.
  */
+@Slf4j
 public class DateUtils {
 
     public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd.MM.yyyy");
@@ -15,7 +18,7 @@ public class DateUtils {
         try {
             return (DATE_FORMATTER.parse(date));
         } catch (ParseException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }

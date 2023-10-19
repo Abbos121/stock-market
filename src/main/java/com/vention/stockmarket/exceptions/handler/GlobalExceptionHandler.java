@@ -1,21 +1,19 @@
 package com.vention.stockmarket.exceptions.handler;
 
-import com.vention.stockmarket.exceptions.ResourceNotFoundException;
-import org.springframework.http.HttpHeaders;
+import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -32,27 +30,24 @@ public class GlobalExceptionHandler {
     }
 
     // For catching Exception.class
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFoundExceptionClass(ResourceNotFoundException ex, WebRequest request) {
-        ex.printStackTrace();
-        String resBody = "Ma'lumot topilmadi";
-        if (ex.getMessage() != null && !ex.getMessage().isEmpty())
+    @ExceptionHandler(CustomResourceNotFoundException.class)
+    public ResponseEntity<String> handleResourceNotFoundExceptionClass(CustomResourceNotFoundException ex, WebRequest request) {
+        String resBody = "Not found";
+        if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
             resBody = ex.getMessage();
+        }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(resBody);
     }
 
-
     // For catching Exception.class
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleExceptionClass(Exception ex, WebRequest request) {
-        ex.printStackTrace();
+        log.error(ex.getMessage());
         String resBody;
-        resBody = ex.getMessage() != null ? ex.getMessage() : "Kutilmagan nosozlik. Qayta urinib ko'ring!";
+        resBody = ex.getMessage() != null ? ex.getMessage() : "Unexpected error, try again later!";
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(resBody);
     }
-
 }
-

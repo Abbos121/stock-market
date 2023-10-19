@@ -3,10 +3,12 @@ package com.vention.stockmarket.repository.impl;
 import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.enumuration.Role;
-import com.vention.stockmarket.repository.BaseRepository;
+import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
+import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.UserRepository;
 import com.vention.stockmarket.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -17,17 +19,20 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
-    
+    private final DatabaseCredentials databaseCredentials;
+
     @Override
-    public Long create(UserModel user) {
+    public Optional<Long> create(UserModel user) {
         String sql = "INSERT INTO users (first_name, second_name, date_of_birth, created_at) VALUES (?, ?, ?, ?)";
 
-        try (Connection connection = BaseRepository.getConnection();
+        try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getSecondName());
@@ -38,23 +43,22 @@ public class UserRepositoryImpl implements UserRepository {
 
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    return generatedKeys.getLong(1);
+                    return Optional.of(generatedKeys.getLong(1));
                 } else {
                     throw new SQLException("Creating user failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
-            // Handle any exceptions here
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            return Optional.empty();
         }
     }
 
     @Override
-    public UserModel getById(Long id) {
+    public Optional<UserModel> getById(Long id) {
         String sql = "SELECT * FROM users WHERE id = ?";
 
-        try (Connection connection = BaseRepository.getConnection();
+        try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
 
@@ -69,23 +73,21 @@ public class UserRepositoryImpl implements UserRepository {
                     var updatedAt = resultSet.getTimestamp("updated_at");
                     if (updatedAt != null)
                         user.setUpdatedAt(updatedAt.toLocalDateTime());
-                    return user;
-                } else {
-                    return null;
+                    return Optional.of(user);
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
+        return Optional.empty();
     }
 
     @Override
-    public Long registerUser(UserRegisterDTO registerDTO) {
+    public Optional<Long> registerUser(UserRegisterDTO registerDTO) {
         String userTableSql = "INSERT INTO users (first_name, second_name, date_of_birth, created_at) VALUES (?, ?, ?, ?)";
         String securityTableSql = "INSERT INTO security (user_id, email, password, roles) VALUES (?, ?, ?, ?)";
 
-        try (Connection connection = BaseRepository.getConnection();
+        try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatementForUser = connection.prepareStatement(userTableSql, PreparedStatement.RETURN_GENERATED_KEYS);
              PreparedStatement preparedStatementForSecurity = connection.prepareStatement(securityTableSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             connection.setAutoCommit(false);
@@ -105,15 +107,14 @@ public class UserRepositoryImpl implements UserRepository {
                     preparedStatementForSecurity.setString(4, Set.of(Role.USER).toString());
                     preparedStatementForSecurity.executeUpdate();
                     connection.commit();
-                    return userId;
+                    return Optional.of(userId);
                 } else {
                     throw new SQLException("Creating user failed, no ID obtained.");
                 }
             }
         } catch (SQLException e) {
-            // Handle any exceptions here
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            return Optional.empty();
         }
     }
 
@@ -121,7 +122,7 @@ public class UserRepositoryImpl implements UserRepository {
     public void update(UserModel user) {
         String sql = "UPDATE users SET first_name = ?, second_name = ?, date_of_birth = ?, updated_at = ? WHERE id = ?";
 
-        try (Connection connection = BaseRepository.getConnection();
+        try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getSecondName());
@@ -134,8 +135,7 @@ public class UserRepositoryImpl implements UserRepository {
                 throw new SQLException("Updating user failed, no rows affected.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
     }
 
@@ -143,13 +143,12 @@ public class UserRepositoryImpl implements UserRepository {
     public void delete(Long id) {
         String sql = "DELETE FROM users WHERE id = ?";
 
-        try (Connection connection = BaseRepository.getConnection();
+        try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
     }
 
@@ -159,7 +158,7 @@ public class UserRepositoryImpl implements UserRepository {
         String sql = "SELECT * FROM users";
         List<UserModel> users = new ArrayList<>();
 
-        try (Connection connection = BaseRepository.getConnection();
+        try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
@@ -173,9 +172,37 @@ public class UserRepositoryImpl implements UserRepository {
                 users.add(user);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
         }
         return users;
     }
+
+    @Override
+    public Optional<UserModel> getByUserId(Long id) {
+        String sql = "SELECT * FROM users where id = ?";
+
+        try (Connection connection = databaseCredentials.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, id);
+
+            var resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                UserModel user = new UserModel();
+                user.setId(resultSet.getLong("id"));
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setSecondName(resultSet.getString("second_name"));
+                user.setDateOfBirth(resultSet.getDate("date_of_birth"));
+                user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                user.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+                return Optional.of(user);
+            } else {
+                throw new CustomResourceNotFoundException("user not found with id : " + id);
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+        }
+        return Optional.empty();
+    }
+
+
 }

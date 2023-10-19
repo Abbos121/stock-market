@@ -3,6 +3,7 @@ package com.vention.stockmarket.feign.clients;
 
 import com.vention.stockmarket.dto.response.CompanyInfoResponseDTO;
 import com.vention.stockmarket.dto.response.GeneralStockResponseDTO;
+import com.vention.stockmarket.dto.response.RealTimePriceResponseDTO;
 import com.vention.stockmarket.dto.response.StockInfoResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,4 +25,8 @@ public interface StockServiceFeign {
                                                 @RequestHeader("X-RapidAPI-Host") String host,
                                                 @RequestParam("symbol") String symbol);
 
+    @GetMapping("/price")
+    RealTimePriceResponseDTO getRealTimePrice(@RequestHeader("X-RapidAPI-Key") String key,
+                                              @RequestHeader("X-RapidAPI-Host") String host,
+                                              @RequestParam("symbol") String symbol);
 }
