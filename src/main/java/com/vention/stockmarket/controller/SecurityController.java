@@ -1,6 +1,6 @@
 package com.vention.stockmarket.controller;
 
-import com.vention.stockmarket.domain.SecurityModel;
+import com.vention.stockmarket.domain.SecurityCredentials;
 import com.vention.stockmarket.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +20,8 @@ public class SecurityController {
     private final SecurityService service;
 
     @PostMapping
-    public ResponseEntity<?> create(SecurityModel securityModel) {
-        return ResponseEntity.ok(service.create(securityModel));
+    public ResponseEntity<?> create(SecurityCredentials securityCredentials) {
+        return ResponseEntity.ok(service.create(securityCredentials));
     }
 
     @GetMapping("/{id}")
@@ -30,8 +30,8 @@ public class SecurityController {
     }
 
     @PutMapping
-    public ResponseEntity<?> update(SecurityModel securityModel) {
-        service.update(securityModel);
+    public ResponseEntity<?> update(SecurityCredentials securityCredentials) {
+        service.update(securityCredentials);
         return ResponseEntity.ok().build();
     }
 

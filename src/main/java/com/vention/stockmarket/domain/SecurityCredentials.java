@@ -8,14 +8,14 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
-public class SecurityModel {
+public class SecurityCredentials {
     private Long id;
     private Long userId;
     private String email;
     private String password;
     private Set<Role> roles;
 
-    public SecurityModel(Long userId, String email, String password) {
+    public SecurityCredentials(Long userId, String email, String password) {
         this.userId = userId;
         this.email = email;
         this.password = password;
@@ -28,7 +28,7 @@ public class SecurityModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SecurityModel that = (SecurityModel) o;
+        SecurityCredentials that = (SecurityCredentials) o;
 
         return id != null ? id.equals(that.id) : that.id == null;
     }

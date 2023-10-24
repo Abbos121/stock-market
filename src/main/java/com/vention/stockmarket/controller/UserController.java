@@ -28,11 +28,6 @@ public class UserController {
         return ResponseEntity.ok(service.create(userModel));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<ResponseDTO<Long>> registerUser(@RequestBody @Valid UserRegisterDTO registerDTO) {
-        return ResponseEntity.ok(service.register(registerDTO));
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.getById(id));

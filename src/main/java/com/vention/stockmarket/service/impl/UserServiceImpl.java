@@ -7,6 +7,7 @@ import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.UserRepository;
 import com.vention.stockmarket.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public ResponseDTO<Long> create(UserModel userModel) {
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseDTO<Long> register(UserRegisterDTO registerDTO) {
+        registerDTO.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         var userId = repository.registerUser(registerDTO);
         return new ResponseDTO<>(true, 200, "registered successfully", userId.get());
     }

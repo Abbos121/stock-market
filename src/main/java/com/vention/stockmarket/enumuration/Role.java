@@ -20,4 +20,17 @@ public enum Role {
         }
         return roles;
     }
+
+    /**
+     * @param roles set of roles
+     * @returns converted array of roles of string type
+     */
+    public static String[] convertSetToArray(Set<Role> roles) {
+        String[] rolesArr = new String[roles.size()];
+        int i = 0;
+        for (Role role : roles) {
+            rolesArr[i++] = role.name();
+        }
+        return rolesArr;
+    }
 }
