@@ -1,6 +1,7 @@
 package com.vention.stockmarket.controller;
 
 import com.vention.stockmarket.domain.UserModel;
+import com.vention.stockmarket.dto.request.UserUpdateDTO;
 import com.vention.stockmarket.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,8 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody @Valid UserModel userModel) {
-        service.update(userModel);
+    public ResponseEntity<?> update(@RequestBody @Valid UserUpdateDTO updateDTO) {
+        service.update(new UserModel(updateDTO));
         return ResponseEntity.ok().build();
     }
 
