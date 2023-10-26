@@ -41,7 +41,6 @@ public class StockRepositoryImpl implements StockRepository {
                 preparedStatement.setString(8, stock.getType());
                 preparedStatement.addBatch();
             }
-
             preparedStatement.executeBatch();
         } catch (SQLException e) {
             log.error(e.getMessage());

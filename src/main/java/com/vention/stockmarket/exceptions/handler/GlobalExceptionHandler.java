@@ -1,6 +1,7 @@
 package com.vention.stockmarket.exceptions.handler;
 
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
+import com.vention.stockmarket.exceptions.CustomUnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    // For catching Exception.class
     @ExceptionHandler(CustomResourceNotFoundException.class)
     public ResponseEntity<String> handleResourceNotFoundExceptionClass(CustomResourceNotFoundException ex, WebRequest request) {
         String resBody = "Not found";
@@ -41,10 +41,14 @@ public class GlobalExceptionHandler {
                 .body(resBody);
     }
 
-    // For catching Exception.class
+    @ExceptionHandler(CustomUnauthorizedException.class)
+    public ResponseEntity<String> handleUnauthorizedExceptions(CustomUnauthorizedException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleExceptionClass(Exception ex, WebRequest request) {
-        log.error(ex.getMessage());
+        log.error("Unexpected : " + ex);
         String resBody;
         resBody = ex.getMessage() != null ? ex.getMessage() : "Unexpected error, try again later!";
         return ResponseEntity.status(HttpStatus.FORBIDDEN)

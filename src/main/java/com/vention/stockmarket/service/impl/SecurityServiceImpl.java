@@ -1,8 +1,8 @@
 package com.vention.stockmarket.service.impl;
 
+import com.vention.stockmarket.domain.SecurityCredentials;
 import com.vention.stockmarket.dto.request.AuthRequestDTO;
 import com.vention.stockmarket.dto.response.ResponseDTO;
-import com.vention.stockmarket.domain.SecurityCredentials;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.SecurityRepository;
 import com.vention.stockmarket.service.SecurityService;
@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

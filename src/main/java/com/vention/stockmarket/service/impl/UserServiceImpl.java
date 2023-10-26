@@ -4,7 +4,9 @@ import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.dto.response.ResponseDTO;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
+import com.vention.stockmarket.exceptions.CustomUnauthorizedException;
 import com.vention.stockmarket.repository.UserRepository;
+import com.vention.stockmarket.service.SecurityHelperService;
 import com.vention.stockmarket.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +21,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final SecurityHelperService securityHelperService;
 
     @Override
     public ResponseDTO<Long> create(UserModel userModel) {
@@ -35,6 +38,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseDTO<UserModel> getById(Long id) {
+        if (!securityHelperService.hasUserPermissions(id)) {
+            throw new CustomUnauthorizedException();
+        }
         Optional<UserModel> user = repository.getById(id);
         if (user.isEmpty()) {
             throw new CustomResourceNotFoundException("User not found with id : " + id);
@@ -44,16 +50,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(UserModel userModel) {
+        if (!securityHelperService.hasUserPermissions(userModel.getId())) {
+            throw new CustomUnauthorizedException();
+        }
         repository.update(userModel);
     }
 
     @Override
     public void delete(Long id) {
+        if (!securityHelperService.hasUserPermissions(id)) {
+            throw new CustomUnauthorizedException();
+        }
         repository.delete(id);
     }
 
     @Override
     public ResponseDTO<List<UserModel>> getAll() {
+        if (!SecurityHelperService.isAdmin()) {
+            throw new CustomUnauthorizedException();
+        }
         List<UserModel> users = repository.getAll();
         return new ResponseDTO<>(true, users);
     }

@@ -168,4 +168,31 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             return Optional.empty();
         }
     }
+
+    @Override
+    public Optional<SecurityCredentials> getByUserId(Long userId) {
+        String sql = "SELECT * FROM security_credentials where user_id = ?";
+        try (Connection connection = databaseCredentials.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setLong(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                SecurityCredentials security = new SecurityCredentials();
+                security.setId(resultSet.getLong("id"));
+                security.setUserId(resultSet.getLong("user_id"));
+                security.setEmail(resultSet.getString("email"));
+                security.setPassword(resultSet.getString("password"));
+                var roles = Role.convertFromStringToSet(resultSet.getString("roles"));
+                security.setRoles(roles);
+                return Optional.of(security);
+            } else {
+                throw new CustomResourceNotFoundException(userId + "email not found");
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            return Optional.empty();
+        }
+    }
 }

@@ -9,4 +9,5 @@ public interface SecurityRepository extends BaseRepository<SecurityCredentials> 
     List<SecurityCredentials> getAll();
 
     Optional<SecurityCredentials> getByEmail(String email);
+    Optional<SecurityCredentials> getByUserId(Long userId);
 }

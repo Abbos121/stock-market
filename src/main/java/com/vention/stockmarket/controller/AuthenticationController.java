@@ -1,6 +1,5 @@
 package com.vention.stockmarket.controller;
 
-
 import com.vention.stockmarket.dto.request.AuthRequestDTO;
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.dto.response.AuthResponseDTO;
