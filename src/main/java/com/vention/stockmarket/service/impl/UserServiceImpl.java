@@ -1,10 +1,12 @@
 package com.vention.stockmarket.service.impl;
 
+import com.vention.stockmarket.domain.SecurityCredentials;
 import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.dto.response.ResponseDTO;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.exceptions.CustomUnauthorizedException;
+import com.vention.stockmarket.repository.SecurityRepository;
 import com.vention.stockmarket.repository.UserRepository;
 import com.vention.stockmarket.service.SecurityHelperService;
 import com.vention.stockmarket.service.UserService;
@@ -22,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final SecurityHelperService securityHelperService;
+    private final SecurityRepository securityRepository;
 
     @Override
     public ResponseDTO<Long> create(UserModel userModel) {
@@ -34,6 +37,19 @@ public class UserServiceImpl implements UserService {
         registerDTO.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         var userId = repository.registerUser(registerDTO);
         return new ResponseDTO<>(true, 200, "registered successfully", userId.get());
+    }
+
+    @Override
+    public ResponseDTO<UserModel> getByUsername(String username) {
+        if (!SecurityHelperService.hasUserPermissions(username)) {
+            throw new CustomUnauthorizedException();
+        }
+        Optional<SecurityCredentials> securityCredentials = securityRepository.getByEmail(username);
+        if (securityCredentials.isEmpty()) {
+            throw new CustomResourceNotFoundException("User not found with username : " + username);
+        }
+        var userModel = repository.getById(securityCredentials.get().getUserId());
+        return new ResponseDTO<>(true, userModel.get());
     }
 
     @Override
@@ -72,5 +88,4 @@ public class UserServiceImpl implements UserService {
         List<UserModel> users = repository.getAll();
         return new ResponseDTO<>(true, users);
     }
-
 }

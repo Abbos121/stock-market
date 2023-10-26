@@ -3,7 +3,6 @@ package com.vention.stockmarket.repository.impl;
 import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.enumuration.Role;
-import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.UserRepository;
 import com.vention.stockmarket.utils.DateUtils;
@@ -49,7 +48,7 @@ public class UserRepositoryImpl implements UserRepository {
                 }
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
             return Optional.empty();
         }
     }
@@ -77,7 +76,7 @@ public class UserRepositoryImpl implements UserRepository {
                 }
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
         return Optional.empty();
     }
@@ -113,7 +112,7 @@ public class UserRepositoryImpl implements UserRepository {
                 }
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
             return Optional.empty();
         }
     }
@@ -137,7 +136,7 @@ public class UserRepositoryImpl implements UserRepository {
                 throw new SQLException("Updating user failed, no rows affected.");
             }
         } catch (SQLException e) {
-            log.error("" + e);
+            log.info(e.getMessage());
         }
     }
 
@@ -150,10 +149,9 @@ public class UserRepositoryImpl implements UserRepository {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
     }
-
 
     @Override
     public List<UserModel> getAll() {
@@ -174,37 +172,8 @@ public class UserRepositoryImpl implements UserRepository {
                 users.add(user);
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
         return users;
     }
-
-    @Override
-    public Optional<UserModel> getByUserId(Long id) {
-        String sql = "SELECT * FROM users where id = ?";
-
-        try (Connection connection = databaseCredentials.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, id);
-
-            var resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                UserModel user = new UserModel();
-                user.setId(resultSet.getLong("id"));
-                user.setFirstName(resultSet.getString("first_name"));
-                user.setSecondName(resultSet.getString("second_name"));
-                user.setDateOfBirth(resultSet.getDate("date_of_birth"));
-                user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-                user.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
-                return Optional.of(user);
-            } else {
-                throw new CustomResourceNotFoundException("user not found with id : " + id);
-            }
-        } catch (SQLException e) {
-            log.error(e.getMessage());
-        }
-        return Optional.empty();
-    }
-
-
 }

@@ -43,7 +43,7 @@ public class StockRepositoryImpl implements StockRepository {
             }
             preparedStatement.executeBatch();
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -70,7 +70,7 @@ public class StockRepositoryImpl implements StockRepository {
                 stocks.add(stock);
             }
         } catch (SQLException e) {
-            log.error(e.getMessage()); // Handle the exception appropriately
+            log.info(e.getMessage()); // Handle the exception appropriately
         }
 
         return stocks;
@@ -99,7 +99,7 @@ public class StockRepositoryImpl implements StockRepository {
                 stocks.add(stock);
             }
         } catch (SQLException e) {
-            log.error(e.getMessage()); // Handle the exception appropriately
+            log.info(e.getMessage()); // Handle the exception appropriately
         }
 
         return stocks;
@@ -130,7 +130,7 @@ public class StockRepositoryImpl implements StockRepository {
                 throw new CustomResourceNotFoundException("stock not found with symbol : " + symbol);
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
             return Optional.empty();
         }
     }

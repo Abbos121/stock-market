@@ -27,9 +27,9 @@ public class UserController {
         return ResponseEntity.ok(service.create(userModel));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(service.getById(id));
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getByUsername(@PathVariable("username") String username) {
+        return ResponseEntity.ok(service.getByUsername(username));
     }
 
     @PutMapping

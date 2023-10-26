@@ -18,7 +18,7 @@ public class DateUtils {
         try {
             return (DATE_FORMATTER.parse(date));
         } catch (ParseException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
         return null;
     }

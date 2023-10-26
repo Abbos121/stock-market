@@ -46,7 +46,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 }
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
             return Optional.empty();
         }
     }
@@ -72,7 +72,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 }
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
         return Optional.empty();
     }
@@ -96,7 +96,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             }
 
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -114,7 +114,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             }
 
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -137,7 +137,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 securities.add(security);
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
         return securities;
     }
@@ -164,7 +164,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 throw new CustomResourceNotFoundException(email + "email not found");
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
             return Optional.empty();
         }
     }
@@ -191,7 +191,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 throw new CustomResourceNotFoundException(userId + "email not found");
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
             return Optional.empty();
         }
     }

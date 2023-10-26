@@ -31,7 +31,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
             preparedStatement.setString(2, companySymbol);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -47,7 +47,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
             preparedStatement.setString(2, companySymbol);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -63,7 +63,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
                 companiesIdList.add(resultSet.getString("company_symbol"));
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
         return companiesIdList;
     }
@@ -79,7 +79,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
             var resultSet = preparedStatement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
             return false;
         }
     }

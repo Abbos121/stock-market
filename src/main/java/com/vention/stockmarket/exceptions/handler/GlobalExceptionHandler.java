@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleExceptionClass(Exception ex, WebRequest request) {
-        log.error("Unexpected : " + ex);
+        log.info("Unexpected : " + ex);
         String resBody;
         resBody = ex.getMessage() != null ? ex.getMessage() : "Unexpected error, try again later!";
         return ResponseEntity.status(HttpStatus.FORBIDDEN)

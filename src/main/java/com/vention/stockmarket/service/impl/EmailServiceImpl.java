@@ -5,10 +5,7 @@ import com.vention.stockmarket.repository.FavouriteCompaniesRepository;
 import com.vention.stockmarket.repository.SecurityRepository;
 import com.vention.stockmarket.service.EmailService;
 import com.vention.stockmarket.service.StockService;
-import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +44,7 @@ public class EmailServiceImpl implements EmailService {
                     sendEmailToUser(email, companiesInfo);
                 }
             } catch (MessagingException e) {
-                log.error("Mail exception : " + e.getMessage());
+                log.warn("Mail exception : " + e.getMessage());
             }
         });
     }
