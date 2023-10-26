@@ -85,7 +85,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<Long> registerUser(UserRegisterDTO registerDTO) {
         String userTableSql = "INSERT INTO users (first_name, second_name, date_of_birth, created_at) VALUES (?, ?, ?, ?)";
-        String securityTableSql = "INSERT INTO security (user_id, email, password, roles) VALUES (?, ?, ?, ?)";
+        String securityTableSql = "INSERT INTO security_credentials (user_id, email, password, roles) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatementForUser = connection.prepareStatement(userTableSql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -126,7 +126,9 @@ public class UserRepositoryImpl implements UserRepository {
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getSecondName());
-            preparedStatement.setDate(3, DateUtils.convertUtilDateToSqlDate(user.getDateOfBirth()));
+            if (user.getDateOfBirth() != null) {
+                preparedStatement.setDate(3, DateUtils.convertUtilDateToSqlDate(user.getDateOfBirth()));
+            }
             preparedStatement.setTimestamp(4, Timestamp.valueOf(user.getUpdatedAt()));
             preparedStatement.setLong(5, user.getId());
 
@@ -135,7 +137,7 @@ public class UserRepositoryImpl implements UserRepository {
                 throw new SQLException("Updating user failed, no rows affected.");
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.error("" + e);
         }
     }
 

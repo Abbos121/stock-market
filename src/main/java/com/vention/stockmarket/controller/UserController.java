@@ -1,8 +1,7 @@
 package com.vention.stockmarket.controller;
 
 import com.vention.stockmarket.domain.UserModel;
-import com.vention.stockmarket.dto.request.UserRegisterDTO;
-import com.vention.stockmarket.dto.response.ResponseDTO;
+import com.vention.stockmarket.dto.request.UserUpdateDTO;
 import com.vention.stockmarket.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,19 +27,14 @@ public class UserController {
         return ResponseEntity.ok(service.create(userModel));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<ResponseDTO<Long>> registerUser(@RequestBody @Valid UserRegisterDTO registerDTO) {
-        return ResponseEntity.ok(service.register(registerDTO));
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
     @PutMapping
-    public ResponseEntity<?> update(UserModel userModel) {
-        service.update(userModel);
+    public ResponseEntity<?> update(@RequestBody @Valid UserUpdateDTO updateDTO) {
+        service.update(new UserModel(updateDTO));
         return ResponseEntity.ok().build();
     }
 

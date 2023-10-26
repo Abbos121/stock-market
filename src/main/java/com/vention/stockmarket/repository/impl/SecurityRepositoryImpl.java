@@ -1,6 +1,6 @@
 package com.vention.stockmarket.repository.impl;
 
-import com.vention.stockmarket.domain.SecurityModel;
+import com.vention.stockmarket.domain.SecurityCredentials;
 import com.vention.stockmarket.enumuration.Role;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
@@ -26,8 +26,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
     private final DatabaseCredentials databaseCredentials;
 
     @Override
-    public Optional<Long> create(SecurityModel security) {
-        String sql = "INSERT INTO security (user_id, email, password, roles) VALUES (?, ?, ?, ?)";
+    public Optional<Long> create(SecurityCredentials security) {
+        String sql = "INSERT INTO security_credentials (user_id, email, password, roles) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement =
@@ -52,8 +52,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
     }
 
     @Override
-    public Optional<SecurityModel> getById(Long id) {
-        String sql = "SELECT * FROM security WHERE id = ?";
+    public Optional<SecurityCredentials> getById(Long id) {
+        String sql = "SELECT * FROM security_credentials WHERE id = ?";
 
         try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -61,7 +61,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    SecurityModel security = new SecurityModel();
+                    SecurityCredentials security = new SecurityCredentials();
                     security.setId(resultSet.getLong("id"));
                     security.setUserId(resultSet.getLong("user_id"));
                     security.setEmail(resultSet.getString("email"));
@@ -78,8 +78,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
     }
 
     @Override
-    public void update(SecurityModel security) {
-        String sql = "UPDATE security SET user_id = ?, email = ?, password = ?, roles = ?, updated_at = ? WHERE id = ?";
+    public void update(SecurityCredentials security) {
+        String sql = "UPDATE security_credentials SET user_id = ?, email = ?, password = ?, roles = ?, updated_at = ? WHERE id = ?";
 
         try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -102,7 +102,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
 
     @Override
     public void delete(Long id) {
-        String sql = "DELETE FROM security WHERE id = ?";
+        String sql = "DELETE FROM security_credentials WHERE id = ?";
 
         try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -119,15 +119,15 @@ public class SecurityRepositoryImpl implements SecurityRepository {
     }
 
     @Override
-    public List<SecurityModel> getAll() {
-        String sql = "SELECT * FROM security";
-        List<SecurityModel> securities = new ArrayList<>();
+    public List<SecurityCredentials> getAll() {
+        String sql = "SELECT * FROM security_credentials";
+        List<SecurityCredentials> securities = new ArrayList<>();
 
         try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
-                SecurityModel security = new SecurityModel();
+                SecurityCredentials security = new SecurityCredentials();
                 security.setId(resultSet.getLong("id"));
                 security.setUserId(resultSet.getLong("user_id"));
                 security.setEmail(resultSet.getString("email"));
@@ -143,8 +143,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
     }
 
     @Override
-    public Optional<SecurityModel> getByEmail(String email) {
-        String sql = "SELECT * FROM security where email = ?";
+    public Optional<SecurityCredentials> getByEmail(String email) {
+        String sql = "SELECT * FROM security_credentials where email = ?";
         try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
@@ -152,7 +152,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                SecurityModel security = new SecurityModel();
+                SecurityCredentials security = new SecurityCredentials();
                 security.setId(resultSet.getLong("id"));
                 security.setUserId(resultSet.getLong("user_id"));
                 security.setEmail(resultSet.getString("email"));
@@ -162,6 +162,33 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 return Optional.of(security);
             } else {
                 throw new CustomResourceNotFoundException(email + "email not found");
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<SecurityCredentials> getByUserId(Long userId) {
+        String sql = "SELECT * FROM security_credentials where user_id = ?";
+        try (Connection connection = databaseCredentials.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setLong(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                SecurityCredentials security = new SecurityCredentials();
+                security.setId(resultSet.getLong("id"));
+                security.setUserId(resultSet.getLong("user_id"));
+                security.setEmail(resultSet.getString("email"));
+                security.setPassword(resultSet.getString("password"));
+                var roles = Role.convertFromStringToSet(resultSet.getString("roles"));
+                security.setRoles(roles);
+                return Optional.of(security);
+            } else {
+                throw new CustomResourceNotFoundException(userId + "email not found");
             }
         } catch (SQLException e) {
             log.error(e.getMessage());
