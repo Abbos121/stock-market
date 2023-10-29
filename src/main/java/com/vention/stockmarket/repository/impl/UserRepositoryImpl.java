@@ -128,7 +128,7 @@ public class UserRepositoryImpl implements UserRepository {
             if (user.getDateOfBirth() != null) {
                 preparedStatement.setDate(3, DateUtils.convertUtilDateToSqlDate(user.getDateOfBirth()));
             }
-            preparedStatement.setTimestamp(4, Timestamp.valueOf(user.getUpdatedAt()));
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
             preparedStatement.setLong(5, user.getId());
 
             int affectedRows = preparedStatement.executeUpdate();

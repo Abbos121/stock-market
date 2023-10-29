@@ -30,7 +30,7 @@ public class EmailServiceImpl implements EmailService {
     private String sender;
 
     @Override
-    @Scheduled(cron = "0 13 11 * * ?")
+    @Scheduled(cron = "0 55 22 * * ?")
     public void sendEmailToUsersAboutFavouriteCompanies() {
         securityRepository.getAll().forEach(securityModel -> {
             var email = securityModel.getEmail();

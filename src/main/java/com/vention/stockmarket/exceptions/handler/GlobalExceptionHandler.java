@@ -1,5 +1,6 @@
 package com.vention.stockmarket.exceptions.handler;
 
+import com.vention.stockmarket.exceptions.CustomResourceAlreadyExistException;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.exceptions.CustomUnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,16 @@ public class GlobalExceptionHandler {
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(resBody);
+    }
+
+    @ExceptionHandler(CustomResourceAlreadyExistException.class)
+    public ResponseEntity<String> handleResourceAlreadyExistException(CustomResourceAlreadyExistException ex, WebRequest request) {
+        String resBody = "Resource already exist";
+        if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+            resBody = ex.getMessage();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(resBody);
     }
 

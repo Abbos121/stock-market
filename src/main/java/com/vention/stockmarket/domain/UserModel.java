@@ -1,14 +1,17 @@
 package com.vention.stockmarket.domain;
 
+import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.dto.request.UserUpdateDTO;
 import com.vention.stockmarket.utils.DateUtils;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class UserModel {
     private Long id;
@@ -30,6 +33,13 @@ public class UserModel {
         this.firstName = updateDTO.getFirstName();
         this.secondName = updateDTO.getSecondName();
         this.dateOfBirth = DateUtils.convertStringToDate(updateDTO.getDateOfBirth());
+    }
+
+    public UserModel(UserRegisterDTO userRegisterDTO) {
+        this.firstName = userRegisterDTO.getFirstName();
+        this.secondName = userRegisterDTO.getSecondName();
+        this.dateOfBirth = DateUtils.convertStringToDate(userRegisterDTO.getDateOfBirth());
+        this.createdAt = LocalDateTime.now();
     }
 
     @Override

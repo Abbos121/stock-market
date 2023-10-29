@@ -1,5 +1,6 @@
 package com.vention.stockmarket.repository.impl;
 
+import com.vention.stockmarket.exceptions.CustomResourceAlreadyExistException;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.FavouriteCompaniesRepository;
@@ -22,7 +23,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
     @Override
     public void add(Long userId, String companySymbol) {
         if (existsByUserIdAndCompanySymbol(userId, companySymbol)) {
-            throw new CustomResourceNotFoundException("resource already exists with company-id : " + companySymbol);
+            throw new CustomResourceAlreadyExistException("resource already exists with company-id : " + companySymbol);
         }
         String sql = "insert into favourite_companies (user_id, company_symbol) values (?, ?)";
         try (Connection connection = databaseCredentials.getConnection();

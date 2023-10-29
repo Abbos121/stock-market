@@ -1,17 +1,22 @@
 package com.vention.stockmarket.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vention.stockmarket.dto.request.PasswordUpdateDTO;
 import com.vention.stockmarket.enumuration.Role;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class SecurityCredentials {
     private Long id;
     private Long userId;
     private String email;
+    @JsonIgnore
     private String password;
     private Set<Role> roles;
 
@@ -20,6 +25,11 @@ public class SecurityCredentials {
         this.email = email;
         this.password = password;
         roles = Set.of(Role.USER);
+    }
+
+    public SecurityCredentials(PasswordUpdateDTO updateDTO) {
+        this.email = updateDTO.getEmail();
+        this.password = updateDTO.getPassword();
     }
 
 

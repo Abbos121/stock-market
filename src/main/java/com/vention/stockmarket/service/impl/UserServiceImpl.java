@@ -4,6 +4,7 @@ import com.vention.stockmarket.domain.SecurityCredentials;
 import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.dto.response.ResponseDTO;
+import com.vention.stockmarket.exceptions.CustomResourceAlreadyExistException;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.exceptions.CustomUnauthorizedException;
 import com.vention.stockmarket.repository.SecurityRepository;
@@ -34,6 +35,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseDTO<Long> register(UserRegisterDTO registerDTO) {
+        if (securityRepository.getByEmail(registerDTO.getEmail()).isPresent()) {
+            throw new CustomResourceAlreadyExistException("User already registered with this email " + registerDTO.getEmail());
+        }
         registerDTO.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         var userId = repository.registerUser(registerDTO);
         return new ResponseDTO<>(true, 200, "registered successfully", userId.get());
