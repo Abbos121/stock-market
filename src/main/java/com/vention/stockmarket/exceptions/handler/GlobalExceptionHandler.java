@@ -1,5 +1,6 @@
 package com.vention.stockmarket.exceptions.handler;
 
+import com.vention.stockmarket.exceptions.CustomResourceAlreadyExistException;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.exceptions.CustomUnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,16 @@ public class GlobalExceptionHandler {
                 .body(resBody);
     }
 
+    @ExceptionHandler(CustomResourceAlreadyExistException.class)
+    public ResponseEntity<String> handleResourceAlreadyExistException(CustomResourceAlreadyExistException ex, WebRequest request) {
+        String resBody = "Resource already exist";
+        if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+            resBody = ex.getMessage();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(resBody);
+    }
+
     @ExceptionHandler(CustomUnauthorizedException.class)
     public ResponseEntity<String> handleUnauthorizedExceptions(CustomUnauthorizedException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -48,7 +59,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleExceptionClass(Exception ex, WebRequest request) {
-        log.error("Unexpected : " + ex);
+        log.info("Unexpected : " + ex);
         String resBody;
         resBody = ex.getMessage() != null ? ex.getMessage() : "Unexpected error, try again later!";
         return ResponseEntity.status(HttpStatus.FORBIDDEN)

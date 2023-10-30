@@ -18,7 +18,7 @@ public class DateUtils {
         try {
             return (DATE_FORMATTER.parse(date));
         } catch (ParseException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
         return null;
     }
@@ -26,7 +26,6 @@ public class DateUtils {
     public static String convertDateToString(Date date) {
         return DATE_FORMATTER.format(date);
     }
-
 
     public static java.sql.Date convertUtilDateToSqlDate(Date date) {
         return new java.sql.Date(date.getTime());

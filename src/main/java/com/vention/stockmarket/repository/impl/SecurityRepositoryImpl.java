@@ -1,6 +1,7 @@
 package com.vention.stockmarket.repository.impl;
 
 import com.vention.stockmarket.domain.SecurityCredentials;
+import com.vention.stockmarket.dto.request.RolesUpdateDTO;
 import com.vention.stockmarket.enumuration.Role;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
@@ -46,7 +47,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 }
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
             return Optional.empty();
         }
     }
@@ -72,23 +73,20 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 }
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
         return Optional.empty();
     }
 
     @Override
     public void update(SecurityCredentials security) {
-        String sql = "UPDATE security_credentials SET user_id = ?, email = ?, password = ?, roles = ?, updated_at = ? WHERE id = ?";
+        String sql = "UPDATE security_credentials SET password = ?, updated_at = ? WHERE email = ?";
 
         try (Connection connection = databaseCredentials.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, security.getUserId());
-            preparedStatement.setString(2, security.getEmail());
-            preparedStatement.setString(3, security.getPassword());
-            preparedStatement.setString(4, security.getRoles().toString());
-            preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-            preparedStatement.setLong(6, security.getId());
+            preparedStatement.setString(1, security.getPassword());
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setString(3, security.getEmail());
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 0) {
@@ -96,7 +94,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             }
 
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -112,9 +110,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             if (affectedRows == 0) {
                 throw new SQLException("Deleting security failed, no rows affected.");
             }
-
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -137,7 +134,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 securities.add(security);
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
         return securities;
     }
@@ -160,13 +157,11 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 var roles = Role.convertFromStringToSet(resultSet.getString("roles"));
                 security.setRoles(roles);
                 return Optional.of(security);
-            } else {
-                throw new CustomResourceNotFoundException(email + "email not found");
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
-            return Optional.empty();
+            log.info(e.getMessage());
         }
+        return Optional.empty();
     }
 
     @Override
@@ -191,8 +186,27 @@ public class SecurityRepositoryImpl implements SecurityRepository {
                 throw new CustomResourceNotFoundException(userId + "email not found");
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public void updateRoles(RolesUpdateDTO updateDTO) {
+        String sql = "UPDATE security_credentials SET roles = ?, updated_at = ? WHERE email = ?";
+
+        try (Connection connection = databaseCredentials.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, updateDTO.getRoles().toString());
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setString(3, updateDTO.getEmail());
+
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Updating security failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            log.info(e.getMessage());
         }
     }
 }

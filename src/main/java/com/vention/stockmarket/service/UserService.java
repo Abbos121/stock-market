@@ -6,4 +6,6 @@ import com.vention.stockmarket.dto.response.ResponseDTO;
 
 public interface UserService extends BaseService<UserModel> {
     ResponseDTO<Long> register(UserRegisterDTO registerDTO);
+
+    ResponseDTO<UserModel> getByUsername(String username);
 }

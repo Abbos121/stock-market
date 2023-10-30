@@ -1,5 +1,6 @@
 package com.vention.stockmarket.repository.impl;
 
+import com.vention.stockmarket.exceptions.CustomResourceAlreadyExistException;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.FavouriteCompaniesRepository;
@@ -22,7 +23,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
     @Override
     public void add(Long userId, String companySymbol) {
         if (existsByUserIdAndCompanySymbol(userId, companySymbol)) {
-            throw new CustomResourceNotFoundException("resource already exists with company-id : " + companySymbol);
+            throw new CustomResourceAlreadyExistException("resource already exists with company-id : " + companySymbol);
         }
         String sql = "insert into favourite_companies (user_id, company_symbol) values (?, ?)";
         try (Connection connection = databaseCredentials.getConnection();
@@ -31,7 +32,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
             preparedStatement.setString(2, companySymbol);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -47,7 +48,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
             preparedStatement.setString(2, companySymbol);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -63,7 +64,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
                 companiesIdList.add(resultSet.getString("company_symbol"));
             }
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
         }
         return companiesIdList;
     }
@@ -79,7 +80,7 @@ public class FavouriteCompaniesRepositoryImpl implements FavouriteCompaniesRepos
             var resultSet = preparedStatement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
-            log.error(e.getMessage());
+            log.info(e.getMessage());
             return false;
         }
     }

@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class CustomResourceNotFoundException extends RuntimeException {
+public class CustomResourceAlreadyExistException extends RuntimeException {
     private String message;
 }
