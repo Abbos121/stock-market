@@ -70,7 +70,8 @@ public class StockRepositoryImpl implements StockRepository {
 
     @Override
     public List<StockModel> findAll(List<String> companySymbols) {
-        String sql = createSqlUsingIn("SELECT * FROM stocks where symbol in (?)", companySymbols);
+        String sql = "SELECT * FROM stocks where symbol in (?)";
+        sql = createSqlUsingIn(sql, companySymbols);
 
         List<StockModel> stocks = new ArrayList<>();
 

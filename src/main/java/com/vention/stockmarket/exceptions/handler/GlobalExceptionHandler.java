@@ -1,6 +1,7 @@
 package com.vention.stockmarket.exceptions.handler;
 
 import com.vention.stockmarket.exceptions.CustomResourceAlreadyExistException;
+import com.vention.stockmarket.exceptions.CustomResourceCreationFailedException;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.exceptions.CustomUnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,13 @@ public class GlobalExceptionHandler {
             resBody = exception.getMessage();
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body(resBody);
+    }
+
+    @ExceptionHandler(CustomResourceCreationFailedException.class)
+    public ResponseEntity<String> handleResourceCreationFailureException(CustomResourceCreationFailedException exception) {
+        String message = (exception.getMessage() != null && !exception.getMessage().isEmpty())
+                ? exception.getMessage() : "Something went wrong";
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(message);
     }
 
     @ExceptionHandler(CustomUnauthorizedException.class)

@@ -26,8 +26,9 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public ResponseDTO<Long> create(SecurityCredentials securityCredentials) {
-        var userId = repository.create(securityCredentials);
-        return new ResponseDTO<>(true, userId.get());
+        var userId = repository.create(securityCredentials)
+                .orElseThrow(() -> new RuntimeException("Something went wrong please try again later"));
+        return new ResponseDTO<>(true, userId);
     }
 
     @Override

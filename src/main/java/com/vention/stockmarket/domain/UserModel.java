@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -47,7 +48,7 @@ public class UserModel {
 
         UserModel userModel = (UserModel) o;
 
-        return id != null ? id.equals(userModel.id) : userModel.id == null;
+        return Objects.equals(id, userModel.id);
     }
 
     @Override

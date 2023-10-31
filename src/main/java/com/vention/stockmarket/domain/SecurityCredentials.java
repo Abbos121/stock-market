@@ -6,6 +6,7 @@ import com.vention.stockmarket.enumuration.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -38,7 +39,7 @@ public class SecurityCredentials {
 
         SecurityCredentials that = (SecurityCredentials) o;
 
-        return id != null ? id.equals(that.id) : that.id == null;
+        return Objects.equals(id, that.id);
     }
 
     @Override
