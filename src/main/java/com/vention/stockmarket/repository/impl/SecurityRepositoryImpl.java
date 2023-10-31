@@ -2,10 +2,10 @@ package com.vention.stockmarket.repository.impl;
 
 import com.vention.stockmarket.domain.SecurityCredentials;
 import com.vention.stockmarket.dto.request.RolesUpdateDTO;
-import com.vention.stockmarket.enumuration.Role;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.SecurityRepository;
+import com.vention.stockmarket.repository.impl.mapper.SecurityCredentialsMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -48,8 +48,8 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             }
         } catch (SQLException e) {
             log.info(e.getMessage());
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     @Override
@@ -62,13 +62,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    SecurityCredentials security = new SecurityCredentials();
-                    security.setId(resultSet.getLong("id"));
-                    security.setUserId(resultSet.getLong("user_id"));
-                    security.setEmail(resultSet.getString("email"));
-                    security.setPassword(resultSet.getString("password"));
-                    var roles = Role.convertFromStringToSet(resultSet.getString("roles"));
-                    security.setRoles(roles);
+                    SecurityCredentials security = SecurityCredentialsMapper.mapRow(resultSet);
                     return Optional.of(security);
                 }
             }
@@ -92,7 +86,6 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             if (affectedRows == 0) {
                 throw new SQLException("Updating security failed, no rows affected.");
             }
-
         } catch (SQLException e) {
             log.info(e.getMessage());
         }
@@ -124,13 +117,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
-                SecurityCredentials security = new SecurityCredentials();
-                security.setId(resultSet.getLong("id"));
-                security.setUserId(resultSet.getLong("user_id"));
-                security.setEmail(resultSet.getString("email"));
-                security.setPassword(resultSet.getString("password"));
-                var roles = Role.convertFromStringToSet(resultSet.getString("roles"));
-                security.setRoles(roles);
+                SecurityCredentials security = SecurityCredentialsMapper.mapRow(resultSet);
                 securities.add(security);
             }
         } catch (SQLException e) {
@@ -149,13 +136,7 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                SecurityCredentials security = new SecurityCredentials();
-                security.setId(resultSet.getLong("id"));
-                security.setUserId(resultSet.getLong("user_id"));
-                security.setEmail(resultSet.getString("email"));
-                security.setPassword(resultSet.getString("password"));
-                var roles = Role.convertFromStringToSet(resultSet.getString("roles"));
-                security.setRoles(roles);
+                SecurityCredentials security = SecurityCredentialsMapper.mapRow(resultSet);
                 return Optional.of(security);
             }
         } catch (SQLException e) {
@@ -174,21 +155,15 @@ public class SecurityRepositoryImpl implements SecurityRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                SecurityCredentials security = new SecurityCredentials();
-                security.setId(resultSet.getLong("id"));
-                security.setUserId(resultSet.getLong("user_id"));
-                security.setEmail(resultSet.getString("email"));
-                security.setPassword(resultSet.getString("password"));
-                var roles = Role.convertFromStringToSet(resultSet.getString("roles"));
-                security.setRoles(roles);
+                SecurityCredentials security = SecurityCredentialsMapper.mapRow(resultSet);
                 return Optional.of(security);
             } else {
                 throw new CustomResourceNotFoundException(userId + "email not found");
             }
         } catch (SQLException e) {
             log.info(e.getMessage());
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     @Override

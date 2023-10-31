@@ -23,8 +23,7 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public List<StockModel> getStockList() {
-        List<StockModel> allStocks = repository.findAll();
-        return allStocks;
+        return repository.findAll();
     }
 
     @Override
@@ -47,8 +46,7 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public CompanyInfoResponseDTO getLatestCompanyInfo(String symbol) {
-        var companyInfo = stockServiceFeign.getLatestCompanyInfo(RAPID_API_KEY, RAPID_API_HOST, symbol);
-        return companyInfo;
+        return stockServiceFeign.getLatestCompanyInfo(RAPID_API_KEY, RAPID_API_HOST, symbol);
     }
 
     private void setStockPrice(AtomicInteger numberOfStocksHavingPrice, StockModel stock, StockInfoResponseDTO dto) {

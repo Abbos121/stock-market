@@ -4,6 +4,7 @@ import com.vention.stockmarket.domain.StockModel;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.StockRepository;
+import com.vention.stockmarket.repository.impl.mapper.StockModelMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -57,20 +58,11 @@ public class StockRepositoryImpl implements StockRepository {
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
-                StockModel stock = new StockModel();
-                stock.setId(resultSet.getLong("id"));
-                stock.setSymbol(resultSet.getString("symbol"));
-                stock.setName(resultSet.getString("name"));
-                stock.setCurrency(resultSet.getString("currency"));
-                stock.setExchange(resultSet.getString("exchange"));
-                stock.setMixCode(resultSet.getString("mix_code"));
-                stock.setCountry(resultSet.getString("country"));
-                stock.setType(resultSet.getString("type"));
-                stock.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                StockModel stock = StockModelMapper.mapRow(resultSet);
                 stocks.add(stock);
             }
         } catch (SQLException e) {
-            log.info(e.getMessage()); // Handle the exception appropriately
+            log.info(e.getMessage());
         }
 
         return stocks;
@@ -86,20 +78,11 @@ public class StockRepositoryImpl implements StockRepository {
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                StockModel stock = new StockModel();
-                stock.setId(resultSet.getLong("id"));
-                stock.setSymbol(resultSet.getString("symbol"));
-                stock.setName(resultSet.getString("name"));
-                stock.setCurrency(resultSet.getString("currency"));
-                stock.setExchange(resultSet.getString("exchange"));
-                stock.setMixCode(resultSet.getString("mix_code"));
-                stock.setCountry(resultSet.getString("country"));
-                stock.setType(resultSet.getString("type"));
-                stock.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                StockModel stock = StockModelMapper.mapRow(resultSet);
                 stocks.add(stock);
             }
         } catch (SQLException e) {
-            log.info(e.getMessage()); // Handle the exception appropriately
+            log.info(e.getMessage());
         }
 
         return stocks;
@@ -115,24 +98,15 @@ public class StockRepositoryImpl implements StockRepository {
             preparedStatement.setString(1, symbol);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                StockModel stock = new StockModel();
-                stock.setId(resultSet.getLong("id"));
-                stock.setSymbol(resultSet.getString("symbol"));
-                stock.setName(resultSet.getString("name"));
-                stock.setCurrency(resultSet.getString("currency"));
-                stock.setExchange(resultSet.getString("exchange"));
-                stock.setMixCode(resultSet.getString("mix_code"));
-                stock.setCountry(resultSet.getString("country"));
-                stock.setType(resultSet.getString("type"));
-                stock.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                StockModel stock = StockModelMapper.mapRow(resultSet);
                 return Optional.of(stock);
             } else {
                 throw new CustomResourceNotFoundException("stock not found with symbol : " + symbol);
             }
         } catch (SQLException e) {
             log.info(e.getMessage());
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     private String createSqlUsingIn(String sql, List<String> symbols) {
@@ -145,6 +119,4 @@ public class StockRepositoryImpl implements StockRepository {
         }
         return sql.replace("?", placeholders);
     }
-
-
 }

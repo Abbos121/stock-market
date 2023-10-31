@@ -10,5 +10,5 @@ public interface SecurityService extends BaseService<SecurityCredentials> {
 
     ResponseDTO<SecurityCredentials> getByEmail(String email);
 
-    ResponseDTO<?> editRoles(RolesUpdateDTO updateDTO);
+    void editRoles(RolesUpdateDTO updateDTO);
 }

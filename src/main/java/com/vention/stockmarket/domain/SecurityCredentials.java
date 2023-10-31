@@ -3,14 +3,12 @@ package com.vention.stockmarket.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vention.stockmarket.dto.request.PasswordUpdateDTO;
 import com.vention.stockmarket.enumuration.Role;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class SecurityCredentials {
     private Long id;

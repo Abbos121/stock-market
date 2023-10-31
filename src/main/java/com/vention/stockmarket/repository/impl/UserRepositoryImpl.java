@@ -5,6 +5,7 @@ import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.enumuration.Role;
 import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.UserRepository;
+import com.vention.stockmarket.repository.impl.mapper.UserModelMapper;
 import com.vention.stockmarket.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,8 +50,8 @@ public class UserRepositoryImpl implements UserRepository {
             }
         } catch (SQLException e) {
             log.info(e.getMessage());
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     @Override
@@ -63,15 +64,7 @@ public class UserRepositoryImpl implements UserRepository {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    UserModel user = new UserModel();
-                    user.setId(resultSet.getLong("id"));
-                    user.setFirstName(resultSet.getString("first_name"));
-                    user.setSecondName(resultSet.getString("second_name"));
-                    user.setDateOfBirth(resultSet.getDate("date_of_birth"));
-                    user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-                    var updatedAt = resultSet.getTimestamp("updated_at");
-                    if (updatedAt != null)
-                        user.setUpdatedAt(updatedAt.toLocalDateTime());
+                    UserModel user = UserModelMapper.mapRow(resultSet);
                     return Optional.of(user);
                 }
             }
@@ -92,8 +85,7 @@ public class UserRepositoryImpl implements UserRepository {
             connection.setAutoCommit(false);
             preparedStatementForUser.setString(1, registerDTO.getFirstName());
             preparedStatementForUser.setString(2, registerDTO.getSecondName());
-            var dateOfBirth = DateUtils.convertStringToDate(registerDTO.getDateOfBirth());
-            preparedStatementForUser.setDate(3, DateUtils.convertUtilDateToSqlDate(dateOfBirth));
+            preparedStatementForUser.setDate(3, DateUtils.convertUtilDateToSqlDate(registerDTO.getDateOfBirth()));
             preparedStatementForUser.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
             preparedStatementForUser.executeUpdate();
 
@@ -113,8 +105,8 @@ public class UserRepositoryImpl implements UserRepository {
             }
         } catch (SQLException e) {
             log.info(e.getMessage());
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     @Override
@@ -162,13 +154,7 @@ public class UserRepositoryImpl implements UserRepository {
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
-                UserModel user = new UserModel();
-                user.setId(resultSet.getLong("id"));
-                user.setFirstName(resultSet.getString("first_name"));
-                user.setSecondName(resultSet.getString("second_name"));
-                user.setDateOfBirth(resultSet.getDate("date_of_birth"));
-                user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-                user.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+                UserModel user = UserModelMapper.mapRow(resultSet);
                 users.add(user);
             }
         } catch (SQLException e) {
