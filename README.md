@@ -50,7 +50,7 @@ The project aims to provide real-time stock market data from third-party APIs.
     ```bash
    mvn clean install
    ```
-3. Run the applciation
+3. Run the application
     ```bash
    java -jar target/stock-market.jar 
     ```
@@ -71,3 +71,14 @@ The project aims to provide real-time stock market data from third-party APIs.
 To create tables run ddl sql commands inside resources.ddl.create-table.sql, and also there are corresponding sequences in create-sequences.sql in the same directory
 
 ## Third-Party APIs
+- I have used [TWELVE API](https://rapidapi.com/twelvedata/api/twelve-data1/) to get stock information and companies details for free. So, there are some restrictions on free usage such as number of requests per minute and per day, or not all companies info is available
+- To get access for free usage on this API, you have to sign up from [rapidapi.com](https://rapidapi.com/), and get generated key and host to access the API
+
+## License 
+This project does not have an explicit open-source license at this time.
+If you have questions or need further clarification regarding the usage or distribution of this code, please contact [abbosakramov121@gmail.com](mailto:abbosakramov121@gmail.com).
+
+## Acknowledgements
+I would like to express my gratitude to the following person who has guided and corrected my mistakes all the way through development
+
+- I am deeply thankful to Sergei for his guidance, mentorship, and expertise, which played a crucial role in shaping this project.
