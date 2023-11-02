@@ -7,6 +7,7 @@ import com.vention.stockmarket.dto.response.ResponseDTO;
 import com.vention.stockmarket.service.SecurityService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/security")
 @RequiredArgsConstructor
@@ -25,35 +28,35 @@ public class SecurityController {
     private final SecurityService service;
 
     @PostMapping
-    public ResponseEntity<?> create(SecurityCredentials securityCredentials) {
-        return ResponseEntity.ok(service.create(securityCredentials));
+    public ResponseEntity<ResponseDTO<Long>> create(SecurityCredentials securityCredentials) {
+        return new ResponseEntity<>(service.create(securityCredentials), HttpStatus.CREATED);
     }
 
     @GetMapping("/{email}")
-    public ResponseEntity<?> getById(@PathVariable("email") String email) {
+    public ResponseEntity<ResponseDTO<SecurityCredentials>> getByEmail(@PathVariable("email") String email) {
         return ResponseEntity.ok(service.getByEmail(email));
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<?> update(@RequestBody @Valid PasswordUpdateDTO updateDTO) {
+    public ResponseEntity<HttpStatus> update(@RequestBody @Valid PasswordUpdateDTO updateDTO) {
         service.update(new SecurityCredentials(updateDTO));
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/edit-role")
-    public ResponseEntity<?> update(@RequestBody @Valid RolesUpdateDTO updateDTO) {
-        ResponseDTO<?> responseDTO = service.editRoles(updateDTO);
-        return ResponseEntity.ok(responseDTO);
+    public ResponseEntity<HttpStatus> update(@RequestBody @Valid RolesUpdateDTO updateDTO) {
+        service.editRoles(updateDTO);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
         service.delete(id);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<ResponseDTO<List<SecurityCredentials>>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 }

@@ -1,6 +1,7 @@
 package com.vention.stockmarket.exceptions.handler;
 
 import com.vention.stockmarket.exceptions.CustomResourceAlreadyExistException;
+import com.vention.stockmarket.exceptions.CustomResourceCreationFailedException;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.exceptions.CustomUnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +11,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,9 +21,9 @@ public class GlobalExceptionHandler {
 
     // user input validation exception handler
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, WebRequest request) {
+    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValid(MethodArgumentNotValidException exception) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        exception.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
@@ -32,37 +32,40 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CustomResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFoundExceptionClass(CustomResourceNotFoundException ex, WebRequest request) {
+    public ResponseEntity<String> handleResourceNotFoundExceptionClass(CustomResourceNotFoundException exception) {
         String resBody = "Not found";
-        if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-            resBody = ex.getMessage();
+        if (exception.getMessage() != null && !exception.getMessage().isEmpty()) {
+            resBody = exception.getMessage();
         }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(resBody);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resBody);
     }
 
     @ExceptionHandler(CustomResourceAlreadyExistException.class)
-    public ResponseEntity<String> handleResourceAlreadyExistException(CustomResourceAlreadyExistException ex, WebRequest request) {
+    public ResponseEntity<String> handleResourceAlreadyExistException(CustomResourceAlreadyExistException exception) {
         String resBody = "Resource already exist";
-        if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-            resBody = ex.getMessage();
+        if (exception.getMessage() != null && !exception.getMessage().isEmpty()) {
+            resBody = exception.getMessage();
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(resBody);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(resBody);
+    }
+
+    @ExceptionHandler(CustomResourceCreationFailedException.class)
+    public ResponseEntity<String> handleResourceCreationFailureException(CustomResourceCreationFailedException exception) {
+        String message = (exception.getMessage() != null && !exception.getMessage().isEmpty())
+                ? exception.getMessage() : "Something went wrong";
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(message);
     }
 
     @ExceptionHandler(CustomUnauthorizedException.class)
-    public ResponseEntity<String> handleUnauthorizedExceptions(CustomUnauthorizedException ex, WebRequest request) {
+    public ResponseEntity<String> handleUnauthorizedExceptions() {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleExceptionClass(Exception ex, WebRequest request) {
-        log.info("Unexpected : " + ex);
+    public ResponseEntity<?> handleExceptionClass(Exception exception) {
+        log.info("Unexpected : " + exception);
         String resBody;
-        resBody = ex.getMessage() != null ? ex.getMessage() : "Unexpected error, try again later!";
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(resBody);
+        resBody = exception.getMessage() != null ? exception.getMessage() : "Unexpected error, try again later!";
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resBody);
     }
 }

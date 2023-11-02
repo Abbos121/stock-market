@@ -1,6 +1,7 @@
 package com.vention.stockmarket.service.impl;
 
 import com.vention.stockmarket.dto.response.FavouriteCompanyDTO;
+import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.exceptions.CustomUnauthorizedException;
 import com.vention.stockmarket.repository.FavouriteCompaniesRepository;
 import com.vention.stockmarket.repository.SecurityRepository;
@@ -25,9 +26,11 @@ public class FavouriteCompaniesServiceImpl implements FavouriteCompaniesService 
         if (!SecurityHelperService.hasUserPermissions(username)) {
             throw new CustomUnauthorizedException();
         }
-        var byEmail = securityRepository.getByEmail(username);
-        var bySymbol = stockRepository.findBySymbol(companyName).get();
-        repository.add(byEmail.get().getUserId(), bySymbol.getSymbol());
+        var securityCredentials = securityRepository.getByEmail(username)
+                .orElseThrow(() -> new CustomResourceNotFoundException("security credentials not found with email " + username));
+        var stockModel = stockRepository.findBySymbol(companyName)
+                .orElseThrow(() -> new CustomResourceNotFoundException("stock not found with company symbol " + companyName));
+        repository.add(securityCredentials.getUserId(), stockModel.getSymbol());
     }
 
     @Override
@@ -35,8 +38,9 @@ public class FavouriteCompaniesServiceImpl implements FavouriteCompaniesService 
         if (!SecurityHelperService.hasUserPermissions(username)) {
             throw new CustomUnauthorizedException();
         }
-        var byEmail = securityRepository.getByEmail(username);
-        var companiesSymbols = repository.findByUserId(byEmail.get().getUserId());
+        var securityCredentials = securityRepository.getByEmail(username)
+                .orElseThrow(() -> new CustomResourceNotFoundException("security credentials not found with email " + username));
+        var companiesSymbols = repository.findByUserId(securityCredentials.getUserId());
         var all = stockRepository.findAll(companiesSymbols);
         var favouriteCompanies = all.stream().map(FavouriteCompanyDTO::new).toList();
         return favouriteCompanies;
@@ -47,8 +51,10 @@ public class FavouriteCompaniesServiceImpl implements FavouriteCompaniesService 
         if (!SecurityHelperService.hasUserPermissions(username)) {
             throw new CustomUnauthorizedException();
         }
-        var byEmail = securityRepository.getByEmail(username);
-        var bySymbol = stockRepository.findBySymbol(symbol).get();
-        repository.delete(byEmail.get().getUserId(), bySymbol.getSymbol());
+        var securityCredentials = securityRepository.getByEmail(username)
+                .orElseThrow(() -> new CustomResourceNotFoundException("security credentials not found with email " + username));
+        var stock = stockRepository.findBySymbol(symbol)
+                .orElseThrow(() -> new CustomResourceNotFoundException("stock not found with company symbol " + symbol));
+        repository.delete(securityCredentials.getUserId(), stock.getSymbol());
     }
 }

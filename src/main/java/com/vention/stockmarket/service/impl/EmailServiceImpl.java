@@ -9,7 +9,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,8 +25,6 @@ public class EmailServiceImpl implements EmailService {
     private final FavouriteCompaniesRepository favouriteCompaniesRepository;
     private final SecurityRepository securityRepository;
     private final StockService stockService;
-    @Value("${spring.mail.username}")
-    private String sender;
 
     @Override
     @Scheduled(cron = "0 55 22 * * ?")
@@ -62,7 +59,6 @@ public class EmailServiceImpl implements EmailService {
         StringBuilder emailBody = new StringBuilder();
         emailBody.append("<html><body>");
 
-        // Iterate through the list of companies and add their information to the email body
         for (CompanyInfoResponseDTO companyInfo : companies) {
             emailBody.append("<h2>").append(companyInfo.getName()).append("</h2>").append("\n");
             emailBody.append("<p><b>Symbol:</b> ").append(companyInfo.getSymbol()).append("</p>").append("\n");

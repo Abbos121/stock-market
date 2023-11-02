@@ -1,5 +1,6 @@
 package com.vention.stockmarket.service.impl;
 
+import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.SecurityRepository;
 import com.vention.stockmarket.service.SecurityHelperService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,9 @@ public class SecurityHelperServiceImpl implements SecurityHelperService {
 
     @Override
     public boolean hasUserPermissions(Long userId) {
-        String username = securityRepository.getByUserId(userId).get().getEmail();
+        String username = securityRepository.getByUserId(userId)
+                .orElseThrow(() -> new CustomResourceNotFoundException("user not found with userId " + userId))
+                .getEmail();
         String authenticatedUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         boolean isAdmin = SecurityContextHolder.getContext()

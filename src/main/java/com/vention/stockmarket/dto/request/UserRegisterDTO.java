@@ -2,9 +2,11 @@ package com.vention.stockmarket.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class UserRegisterDTO {
@@ -23,6 +25,6 @@ public class UserRegisterDTO {
     private String secondName;
 
     @NotNull
-    @Pattern(regexp = "\\d{2}\\.\\d{2}\\.\\d{4}", message = "date format must be like dd.MM.yyyy")
-    private String dateOfBirth;
+    @Past(message = "Date of birth must be in the past")
+    private Date dateOfBirth;
 }

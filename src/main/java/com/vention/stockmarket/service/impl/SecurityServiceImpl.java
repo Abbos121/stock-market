@@ -23,12 +23,12 @@ public class SecurityServiceImpl implements SecurityService {
     private final SecurityRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
-    private final SecurityHelperService securityHelperService;
 
     @Override
     public ResponseDTO<Long> create(SecurityCredentials securityCredentials) {
-        var userId = repository.create(securityCredentials);
-        return new ResponseDTO<>(true, userId.get());
+        var userId = repository.create(securityCredentials)
+                .orElseThrow(() -> new RuntimeException("Something went wrong please try again later"));
+        return new ResponseDTO<>(true, userId);
     }
 
     @Override
@@ -96,11 +96,10 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public ResponseDTO<?> editRoles(RolesUpdateDTO updateDTO) {
+    public void editRoles(RolesUpdateDTO updateDTO) {
         if (!SecurityHelperService.isAdmin()) {
             throw new CustomUnauthorizedException();
         }
         repository.updateRoles(updateDTO);
-        return new ResponseDTO<>(true, 200);
     }
 }

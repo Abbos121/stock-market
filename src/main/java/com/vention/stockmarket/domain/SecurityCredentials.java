@@ -3,14 +3,13 @@ package com.vention.stockmarket.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vention.stockmarket.dto.request.PasswordUpdateDTO;
 import com.vention.stockmarket.enumuration.Role;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import java.util.Objects;
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class SecurityCredentials {
     private Long id;
@@ -40,7 +39,7 @@ public class SecurityCredentials {
 
         SecurityCredentials that = (SecurityCredentials) o;
 
-        return id != null ? id.equals(that.id) : that.id == null;
+        return Objects.equals(id, that.id);
     }
 
     @Override

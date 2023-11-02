@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +28,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseDTO<Long> create(UserModel userModel) {
-        Optional<Long> userId = repository.create(userModel);
-        return new ResponseDTO<>(true, userId.get());
+        Long userId = repository.create(userModel)
+                .orElseThrow(CustomResourceNotFoundException::new);
+        return new ResponseDTO<>(true, userId);
     }
 
     @Override
@@ -39,8 +39,9 @@ public class UserServiceImpl implements UserService {
             throw new CustomResourceAlreadyExistException("User already registered with this email " + registerDTO.getEmail());
         }
         registerDTO.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-        var userId = repository.registerUser(registerDTO);
-        return new ResponseDTO<>(true, 200, "registered successfully", userId.get());
+        var userId = repository.registerUser(registerDTO)
+                .orElseThrow(CustomResourceNotFoundException::new);
+        return new ResponseDTO<>(true, 200, "registered successfully", userId);
     }
 
     @Override
@@ -48,12 +49,12 @@ public class UserServiceImpl implements UserService {
         if (!SecurityHelperService.hasUserPermissions(username)) {
             throw new CustomUnauthorizedException();
         }
-        Optional<SecurityCredentials> securityCredentials = securityRepository.getByEmail(username);
-        if (securityCredentials.isEmpty()) {
-            throw new CustomResourceNotFoundException("User not found with username : " + username);
-        }
-        var userModel = repository.getById(securityCredentials.get().getUserId());
-        return new ResponseDTO<>(true, userModel.get());
+        SecurityCredentials securityCredentials = securityRepository.getByEmail(username)
+                .orElseThrow(() -> new CustomResourceNotFoundException("User not found with username : " + username));
+        var user = repository.getById(securityCredentials.getUserId())
+                .orElseThrow(() -> new CustomResourceNotFoundException("User not found with id " + securityCredentials.getUserId()));
+
+        return new ResponseDTO<>(true, user);
     }
 
     @Override
@@ -61,11 +62,10 @@ public class UserServiceImpl implements UserService {
         if (!securityHelperService.hasUserPermissions(id)) {
             throw new CustomUnauthorizedException();
         }
-        Optional<UserModel> user = repository.getById(id);
-        if (user.isEmpty()) {
-            throw new CustomResourceNotFoundException("User not found with id : " + id);
-        }
-        return new ResponseDTO<>(true, user.get());
+        UserModel user = repository.getById(id)
+                .orElseThrow(() -> new CustomResourceNotFoundException("User not found with id : " + id));
+
+        return new ResponseDTO<>(true, user);
     }
 
     @Override
