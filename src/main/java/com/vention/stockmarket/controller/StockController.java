@@ -3,6 +3,8 @@ package com.vention.stockmarket.controller;
 import com.vention.stockmarket.domain.StockModel;
 import com.vention.stockmarket.dto.response.CompanyInfoResponseDTO;
 import com.vention.stockmarket.service.StockService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +17,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/stock")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
+@Tag(name = "4. Stocks", description = "endpoints for getting stock information")
 public class StockController {
 
     private final StockService service;

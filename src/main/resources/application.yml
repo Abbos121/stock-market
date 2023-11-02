@@ -22,3 +22,7 @@ spring:
     jwt:
       key: asDJva1214N
       expiration-time: 1440 # in minutes
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha

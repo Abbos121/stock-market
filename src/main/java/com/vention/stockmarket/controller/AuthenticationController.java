@@ -6,6 +6,7 @@ import com.vention.stockmarket.dto.response.AuthResponseDTO;
 import com.vention.stockmarket.dto.response.ResponseDTO;
 import com.vention.stockmarket.service.SecurityService;
 import com.vention.stockmarket.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/authentication")
 @RequiredArgsConstructor
+@Tag(name = "1. Authentication", description = "endpoints for registration and login")
 public class AuthenticationController {
 
     private final SecurityService securityService;

@@ -1,18 +1,22 @@
 package com.vention.stockmarket.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.Past;
+import lombok.Data;
 
-@Getter
-@Setter
+import java.util.Date;
+
+@Data
+@Schema(title = "User update Details")
 public class UserUpdateDTO {
     @NotNull
     private Long id;
+    @NotNull
     private String firstName;
+    @NotNull
     private String secondName;
     @NotNull
-    @Pattern(regexp = "\\d{2}\\.\\d{2}\\.\\d{4}", message = "date format must be like dd.MM.yyyy")
-    private String dateOfBirth;
+    @Past(message = "Date of birth must be in the past")
+    private Date dateOfBirth;
 }

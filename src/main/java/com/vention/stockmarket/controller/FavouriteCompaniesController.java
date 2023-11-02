@@ -2,6 +2,8 @@ package com.vention.stockmarket.controller;
 
 import com.vention.stockmarket.dto.response.FavouriteCompanyDTO;
 import com.vention.stockmarket.service.FavouriteCompaniesService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/favourite-companies")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
+@Tag(name = "5. Favourite Companies", description = "endpoints for managing favourite list of companies")
 public class FavouriteCompaniesController {
 
     private final FavouriteCompaniesService service;

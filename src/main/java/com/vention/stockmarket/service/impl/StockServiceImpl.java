@@ -27,7 +27,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    @Scheduled(cron = "0 42 22 * * ?")
+    @Scheduled(cron = "0 29 17 * * ?")
     public void updateStockList() {
         var allStocks = stockServiceFeign
                 .getAllStocks(RAPID_API_KEY, RAPID_API_HOST, "NASDAQ").getData();

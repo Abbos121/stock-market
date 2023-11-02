@@ -5,6 +5,8 @@ import com.vention.stockmarket.dto.request.PasswordUpdateDTO;
 import com.vention.stockmarket.dto.request.RolesUpdateDTO;
 import com.vention.stockmarket.dto.response.ResponseDTO;
 import com.vention.stockmarket.service.SecurityService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/security")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
+@Tag(name = "3. Security credentials", description = "endpoints for managing security credentials")
 public class SecurityController {
 
     private final SecurityService service;
