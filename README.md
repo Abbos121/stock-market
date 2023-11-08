@@ -18,7 +18,7 @@ The project aims to provide real-time stock market data from third-party APIs.
 - [Database](#database)
 - [Third-Party APIs](#third-party-apis)
 - [License](#license)
-- [Acknowledgments](#acknowledgments)
+- [Acknowledgements](#acknowledgements)
 
 ## Features
 

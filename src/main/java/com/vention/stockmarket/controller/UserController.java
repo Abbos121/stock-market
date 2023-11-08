@@ -4,6 +4,8 @@ import com.vention.stockmarket.domain.UserModel;
 import com.vention.stockmarket.dto.request.UserUpdateDTO;
 import com.vention.stockmarket.dto.response.ResponseDTO;
 import com.vention.stockmarket.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
+@Tag(name = "2. Users", description = "endpoints for different operations on users")
 public class UserController {
 
     private final UserService service;

@@ -2,7 +2,6 @@ package com.vention.stockmarket.domain;
 
 import com.vention.stockmarket.dto.request.UserRegisterDTO;
 import com.vention.stockmarket.dto.request.UserUpdateDTO;
-import com.vention.stockmarket.utils.DateUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -31,7 +30,7 @@ public class UserModel {
         this.id = updateDTO.getId();
         this.firstName = updateDTO.getFirstName();
         this.secondName = updateDTO.getSecondName();
-        this.dateOfBirth = DateUtils.convertStringToDate(updateDTO.getDateOfBirth());
+        this.dateOfBirth = updateDTO.getDateOfBirth();
     }
 
     public UserModel(UserRegisterDTO userRegisterDTO) {
