@@ -1,8 +1,10 @@
 package com.vention.stockmarket.service.impl;
 
 import com.vention.stockmarket.domain.StockModel;
+import com.vention.stockmarket.dto.filter.StockListFilterDTO;
 import com.vention.stockmarket.dto.response.CompanyInfoResponseDTO;
 import com.vention.stockmarket.dto.response.StockInfoResponseDTO;
+import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.feign.clients.StockServiceFeign;
 import com.vention.stockmarket.repository.StockRepository;
 import com.vention.stockmarket.service.StockService;
@@ -23,8 +25,8 @@ public class StockServiceImpl implements StockService {
     private final StockServiceFeign stockServiceFeign;
 
     @Override
-    public List<StockModel> getStockList() {
-        return repository.findAll();
+    public List<StockModel> getStockList(StockListFilterDTO filterDTO) {
+        return repository.findAll(filterDTO);
     }
 
     @Override
@@ -47,7 +49,11 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public CompanyInfoResponseDTO getLatestCompanyInfo(String symbol) {
-        return stockServiceFeign.getLatestCompanyInfo(RAPID_API_KEY, RAPID_API_HOST, symbol);
+        var latestCompanyInfo = stockServiceFeign.getLatestCompanyInfo(RAPID_API_KEY, RAPID_API_HOST, symbol);
+        if (latestCompanyInfo.getSymbol() == null || latestCompanyInfo.getSymbol().isEmpty()) {
+            throw new CustomResourceNotFoundException("company not found with stock symbol : " + symbol);
+        }
+        return latestCompanyInfo;
     }
 
     private void setStockPrice(AtomicInteger numberOfStocksHavingPrice, StockModel stock, StockInfoResponseDTO dto) {

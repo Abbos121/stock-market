@@ -1,5 +1,6 @@
 package com.vention.stockmarket.exceptions.handler;
 
+import com.vention.stockmarket.exceptions.CustomFeignClientException;
 import com.vention.stockmarket.exceptions.CustomResourceAlreadyExistException;
 import com.vention.stockmarket.exceptions.CustomResourceCreationFailedException;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
@@ -54,6 +55,17 @@ public class GlobalExceptionHandler {
         String message = (exception.getMessage() != null && !exception.getMessage().isEmpty())
                 ? exception.getMessage() : "Something went wrong";
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(message);
+    }
+
+    @ExceptionHandler(CustomFeignClientException.class)
+    public ResponseEntity<String> handleFeignClientException(CustomFeignClientException exception) {
+        if (exception.getReason() != null && !exception.getReason().isEmpty()) {
+            log.error(exception.getReason());
+        }
+        String message = (exception.getReason() != null && !exception.getReason().isEmpty())
+                ? exception.getReason() : "Something went wrong, try again later";
+        message = exception.getStatus() + " - " + message;
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(message);
     }
 
     @ExceptionHandler(CustomUnauthorizedException.class)

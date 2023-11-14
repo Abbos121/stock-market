@@ -1,6 +1,7 @@
 package com.vention.stockmarket.controller;
 
 import com.vention.stockmarket.domain.StockModel;
+import com.vention.stockmarket.dto.filter.StockListFilterDTO;
 import com.vention.stockmarket.dto.response.CompanyInfoResponseDTO;
 import com.vention.stockmarket.service.StockService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -24,8 +25,8 @@ public class StockController {
     private final StockService service;
 
     @GetMapping("/all")
-    public ResponseEntity<List<StockModel>> getAll() {
-        var stockList = service.getStockList();
+    public ResponseEntity<List<StockModel>> getAll(StockListFilterDTO filterDTO) {
+        var stockList = service.getStockList(filterDTO);
         return ResponseEntity.ok(stockList);
     }
 
