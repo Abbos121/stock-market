@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public class StockServiceImpl implements StockService {
 
+    public static final int MAX_LIMITED_NUMBER_OF_REQUESTS = 7;
     private final StockRepository repository;
 
     private final StockServiceFeign stockServiceFeign;
@@ -51,7 +52,7 @@ public class StockServiceImpl implements StockService {
 
     private void setStockPrice(AtomicInteger numberOfStocksHavingPrice, StockModel stock, StockInfoResponseDTO dto) {
         // As I have limited number of requested per minute which is only 8, I am retrieving only 7 stock prices
-        if (numberOfStocksHavingPrice.get() < 7) {
+        if (numberOfStocksHavingPrice.get() < MAX_LIMITED_NUMBER_OF_REQUESTS) {
             var price = stockServiceFeign
                     .getRealTimePrice(RAPID_API_KEY, RAPID_API_HOST, dto.getSymbol());
             stock.setPrice(Double.parseDouble(price.getPrice()));
