@@ -1,6 +1,7 @@
 package com.vention.stockmarket.repository.impl;
 
 import com.vention.stockmarket.domain.StockModel;
+import com.vention.stockmarket.dto.filter.StockListFilterDTO;
 import com.vention.stockmarket.exceptions.CustomResourceNotFoundException;
 import com.vention.stockmarket.repository.DatabaseCredentials;
 import com.vention.stockmarket.repository.StockRepository;
@@ -49,14 +50,17 @@ public class StockRepositoryImpl implements StockRepository {
     }
 
     @Override
-    public List<StockModel> findAll() {
-        String sql = "SELECT * FROM stocks";
+    public List<StockModel> findAll(StockListFilterDTO filterDTO) {
+        String sql = "SELECT * FROM stocks where symbol like ? limit ? offset ?";
         List<StockModel> stocks = new ArrayList<>();
 
         try (Connection connection = databaseCredentials.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, "%" + filterDTO.getSymbolSearch() + "%");
+            preparedStatement.setInt(2, filterDTO.getSize());
+            int offset = filterDTO.getPage() * filterDTO.getSize();
+            preparedStatement.setInt(3, offset);
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 StockModel stock = StockModelMapper.mapRow(resultSet);
                 stocks.add(stock);

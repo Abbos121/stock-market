@@ -86,9 +86,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseDTO<List<UserModel>> getAll() {
-        if (!SecurityHelperService.isAdmin()) {
-            throw new CustomUnauthorizedException();
-        }
         List<UserModel> users = repository.getAll();
         return new ResponseDTO<>(true, users);
     }
